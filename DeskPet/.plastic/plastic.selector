@@ -1,0 +1,4 @@
+repository "DeskPet@lipher@cloud"
+  path "/"
+    br "/main"
+    co "/main"
