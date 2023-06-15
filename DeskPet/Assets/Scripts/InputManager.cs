@@ -6,6 +6,9 @@ using System;
 
 public class InputManager : MonoBehaviour
 {
+    //assign button behavior + icon based on current phase
+    //phase 1: water
+    //phase 2: pet, swatter, clean up?, 
     public InputAction actionKey;
 
     public DragAndShoot shootScript;
@@ -13,7 +16,7 @@ public class InputManager : MonoBehaviour
     private int curButton = 0;
 
     [Header("Cursor Settings")]
-    public Texture2D petCursor;
+    public Texture2D pettingCursor;
     private Vector2 cursorHotSpot = Vector2.zero;
 
     private void OnEnable()
@@ -95,7 +98,7 @@ public class InputManager : MonoBehaviour
 
     public void Press2()
     {
-        Cursor.SetCursor(petCursor, cursorHotSpot, CursorMode.Auto);
+        Cursor.SetCursor(pettingCursor, cursorHotSpot, CursorMode.Auto);
         print("swap cursor");
     }
 

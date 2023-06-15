@@ -60,12 +60,15 @@
   <ItemGroup>
     <Compile Include="Assets\Desktopia\Examples\04_Collisions\SphereSpawner.cs" />
     <Compile Include="Assets\Desktopia\Examples\05_DragDrop\DragDrop.cs" />
+    <Compile Include="Assets\Scripts\Pet\PetBehavior.cs" />
     <Compile Include="Assets\Desktopia\Examples\03_Inputs\InputListener.cs" />
     <Compile Include="Assets\Scripts\TextAssets\WobblyText.cs" />
     <Compile Include="Assets\Scripts\DragAndShoot.cs" />
+    <Compile Include="Assets\Scripts\Pet\PetTrigger.cs" />
     <Compile Include="Assets\Scripts\ScoreHole.cs" />
     <Compile Include="Assets\TypewriterWithHTMLStrings\TypewriterWithHTMLStrings.cs" />
     <Compile Include="Assets\Scripts\InputManager.cs" />
+    <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\UIButtonTest.cs" />
     <Compile Include="Assets\Scripts\NPCPathfinding.cs" />
     <Compile Include="Assets\Scripts\LineDrag.cs" />
