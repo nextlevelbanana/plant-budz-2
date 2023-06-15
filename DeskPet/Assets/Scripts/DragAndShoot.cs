@@ -11,19 +11,7 @@ public class DragAndShoot : MonoBehaviour
     [SerializeField] Vector2 minPower, maxPower;
     [SerializeField] Vector2 force;
     private Vector3 startDrag, endDrag;
-    //public KeyCode dragKey = KeyCode.Space;
-    public InputAction dragKey;
     private Camera cam;
-
-    private void OnEnable()
-    {
-        dragKey.Enable();
-    }
-
-    private void OnDisable()
-    {
-        dragKey.Disable();
-    }
 
     private void Start()
     {
@@ -32,28 +20,23 @@ public class DragAndShoot : MonoBehaviour
         cam = Camera.main;
     }
 
-    private void Update()
+    public void StartDrag()
     {
-        if (dragKey.IsPressed())
-        {
-            Vector3 curPoint = cam.ScreenToWorldPoint(Input.mousePosition);
-            startDrag = transform.position;
-            startDrag.z = 0f;
-            curPoint.z = 0f;
-            ld.RenderLine(startDrag, curPoint);
-        }
-        
+        Vector3 curPoint = cam.ScreenToWorldPoint(Input.mousePosition);
+        startDrag = transform.position;
+        startDrag.z = 0f;
+        curPoint.z = 0f;
+        ld.RenderLine(startDrag, curPoint);
+    }
 
+    public void EndDrag()
+    {
+        endDrag = cam.ScreenToWorldPoint(Input.mousePosition);
+        endDrag.z = 0f;
 
-        if(dragKey.WasReleasedThisFrame())
-        {
-            endDrag = cam.ScreenToWorldPoint(Input.mousePosition);
-            endDrag.z = 0f;
+        force = new Vector2(Mathf.Clamp(startDrag.x - endDrag.x, minPower.x, maxPower.x), Mathf.Clamp(startDrag.y - endDrag.y, minPower.y, maxPower.y));
+        rb.AddForce(force * shotPower, ForceMode2D.Impulse);
 
-            force = new Vector2(Mathf.Clamp(startDrag.x - endDrag.x, minPower.x, maxPower.x), Mathf.Clamp(startDrag.y - endDrag.y, minPower.y, maxPower.y));
-            rb.AddForce(force * shotPower, ForceMode2D.Impulse);
-
-            ld.EndLine();
-        }
+        ld.EndLine();
     }
 }

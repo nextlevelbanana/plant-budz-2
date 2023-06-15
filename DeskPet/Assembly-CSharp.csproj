@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\DragAndShoot.cs" />
     <Compile Include="Assets\Scripts\ScoreHole.cs" />
     <Compile Include="Assets\TypewriterWithHTMLStrings\TypewriterWithHTMLStrings.cs" />
+    <Compile Include="Assets\Scripts\InputManager.cs" />
     <Compile Include="Assets\Scripts\UIButtonTest.cs" />
     <Compile Include="Assets\Scripts\NPCPathfinding.cs" />
     <Compile Include="Assets\Scripts\LineDrag.cs" />
