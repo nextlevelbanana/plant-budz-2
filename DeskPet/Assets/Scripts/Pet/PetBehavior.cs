@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PetBehavior : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class PetBehavior : MonoBehaviour
 
     //More behavior ideas welcome. External control stops everything from running (for cutscenes, etc.)
     //Different stats for cat & bunny are simple, but do we want more than that...?
-    public enum currentBehavior { Patrol, FindFood, ExternalControl, WallClimb };
+    public enum currentBehavior { Patrol, FindFood, ExternalControl, WallClimb, EatFood };
     public currentBehavior behavior;
 
     [SerializeField] Transform curTarget = null;
@@ -21,12 +22,17 @@ public class PetBehavior : MonoBehaviour
     [SerializeField] float ignoreCollisionTime = 3f;
 
     [Header("Idle Patrol")]
-    [SerializeField] float moveSpeed = 2f;
+    [SerializeField] float moveSpeed = 1f;
     [SerializeField] float timeToMove = 2f;
     [SerializeField] float timeToPause = 2f;
-    private float pauseTimeHold;
-    private float moveTimeHold;
-    private bool moving = false;
+    private float pauseTimeHold = 2f;
+    private float moveTimeHold = 2f;
+    private float minMoveTime = 2f;
+    private float maxMoveTime = 10f;
+    private float minPauseTime = 2f;
+    private float maxPauseTime = 10f;
+    private bool isMoving;
+    private bool stopMoving;
     [SerializeField] Vector2 moveDir = Vector2.zero;
     private Vector2 lastDir = Vector2.zero;
 
@@ -45,18 +51,19 @@ public class PetBehavior : MonoBehaviour
     [SerializeField] float chaseSpeedMod = 0.75f;
     [SerializeField] float eatPauseTime = 2f;
 
+    private TextMeshProUGUI hudButton;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        moveTimeHold = timeToMove;
-        pauseTimeHold = timeToPause;
-        behavior = currentBehavior.Patrol;
+        StartBehavior(currentBehavior.Patrol);
         anim = GetComponent<Animator>();
     }
 
     private void Update()
     {
+        GameManager.instance.debugText.text = behavior.ToString();
+       
         switch (behavior)
         {
             case currentBehavior.ExternalControl:
@@ -66,9 +73,9 @@ public class PetBehavior : MonoBehaviour
                 IdlePatrol();
                 break;
 
-            case currentBehavior.WallClimb:
-                ScaleWall();
-                break;
+            // case currentBehavior.WallClimb:
+            //     //ScaleWall();
+            //     break;
 
             case currentBehavior.FindFood:
                 //MoveToTarget();
@@ -77,7 +84,7 @@ public class PetBehavior : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            SetFoodTarget();
+            //SetFoodTarget();
         }
 
         AnimUpdate();
@@ -85,9 +92,15 @@ public class PetBehavior : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (moving)
+
+        if (isMoving)
         {
-            rb.AddForce(moveSpeed * moveDir, ForceMode2D.Force);
+            rb.velocity = moveDir;
+            //startMoving = false;
+        }
+        if (stopMoving) {
+            rb.velocity = Vector2.zero;
+            stopMoving = false;
         }
 
         if (climbing)
@@ -144,16 +157,29 @@ public class PetBehavior : MonoBehaviour
 
     #region Patrol
 
+    private void StartMoving() {
+        timeToPause = Random.Range(minMoveTime, maxMoveTime);
+        moveDir = Random.Range(0f,1f) > 0.5f ? Vector2.right : Vector2.left;
+        isMoving = true;
+        //startMoving = true;
+    }
+
+    private void StopMoving() {
+        isMoving = false;
+        timeToMove = Random.Range(minMoveTime, maxMoveTime);
+        stopMoving = true;
+    }
+
     private void IdlePatrol()
     {
-        if (moving)
+        GameManager.instance.debugText.text = timeToMove.ToString() + rb.velocity.ToString();
+
+        if (isMoving)
         {
             timeToMove -= Time.deltaTime;
             if (timeToMove <= 0f)
             {
-                timeToMove = moveTimeHold;
-                moveDir = RandomDirection();
-                moving = false;
+                StopMoving();
             }
         }
         else
@@ -161,8 +187,7 @@ public class PetBehavior : MonoBehaviour
             timeToPause -= Time.deltaTime;
             if (timeToPause <= 0f)
             {
-                timeToPause = pauseTimeHold;
-                moving = true;
+                StartMoving();
             }
         }
     }
@@ -170,28 +195,17 @@ public class PetBehavior : MonoBehaviour
     private IEnumerator ReturnToPatrol(float pauseBeforeReturn)
     {
         yield return new WaitForSeconds(pauseBeforeReturn);
-        behavior = currentBehavior.Patrol;
-    }
-
-    private Vector2 RandomDirection()
-    {
-        return new Vector2(1, 0);
-        //commented out for testing - need more predictable movement
-        //also not totally sold on this
-        /*Vector2 newDir = new Vector2(Random.Range(-1, 1), 0);
-        if(newDir == lastDir) { return lastDir *= -1; }
-        lastDir = newDir;
-        return newDir;*/
+        StartBehavior(currentBehavior.Patrol);
     }
 
     #endregion
 
     #region Climbing
 
-    public void InitWallClimb(BoxCollider2D col)
+    private void InitWallClimb(BoxCollider2D col)
     {
         behavior = currentBehavior.WallClimb;
-        moving = false;
+        isMoving = false;
         rb.gravityScale = 0;
         climbing = true;
         wallCol = col;
@@ -235,8 +249,6 @@ public class PetBehavior : MonoBehaviour
         rb.rotation = 0;
         StartCoroutine(trigger.IgnoreCollision(ignoreCollisionTime));
 
-
-        moving = true;
         rb.gravityScale = 1;
         climbing = false;
 
@@ -247,10 +259,33 @@ public class PetBehavior : MonoBehaviour
             return;
         }
 
-        behavior = currentBehavior.Patrol;
+        StartBehavior(currentBehavior.Patrol);
     }
 
     #endregion
+
+    public void StartBehavior(currentBehavior newBehavior, Collider2D obj = null) {
+        behavior = newBehavior;
+        switch (newBehavior) {
+            case currentBehavior.Patrol:
+                StartMoving();
+                break;
+            case currentBehavior.WallClimb: 
+                //InitWallClimb((BoxCollider2D)obj);
+                StartBehavior(currentBehavior.Patrol);
+                break;
+            case currentBehavior.EatFood: 
+                DestroyFood(obj.gameObject);
+                break;
+        }
+    }
+
+        private void DestroyFood(GameObject food)
+    {
+        GameManager.instance.RemoveFood(food);
+        FoodFound();
+        Destroy(food);
+    }
 
     #region Find Food
     private void SetFoodTarget()
@@ -263,12 +298,11 @@ public class PetBehavior : MonoBehaviour
             curTarget = potentialTarget;
             findingFood = true;
             GetTargetPos();
-            moving = true;
         }
         else
         {
             print("Food not found");
-            behavior = currentBehavior.Patrol;
+            StartBehavior(currentBehavior.Patrol);
         }
     }
 
@@ -285,13 +319,8 @@ public class PetBehavior : MonoBehaviour
         StartCoroutine(ReturnToPatrol(eatPauseTime));
         curTarget = null;
         findingFood = false;
-        moving = false;
     }
 
     #endregion
-
-
-
-
 
 }
