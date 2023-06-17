@@ -19,13 +19,13 @@ public class PetTrigger : MonoBehaviour
 
         if(other.tag == "Wall")
         {
-            pb.InitWallClimb(other.GetComponent<BoxCollider2D>());
+           //pb.StartBehavior(PetBehavior.currentBehavior.WallClimb, other);
         }
 
         if(other.tag == "Food")
         {
+            pb.StartBehavior(PetBehavior.currentBehavior.EatFood, other);
             print("YUMMY YUMMY");
-            DestroyFood(other.gameObject);
         }
     }
     public IEnumerator IgnoreCollision(float ignoreTime)
@@ -42,12 +42,5 @@ public class PetTrigger : MonoBehaviour
         ignoreCollisions = false;
         col.enabled = true;
         yield break;
-    }
-
-    private void DestroyFood(GameObject food)
-    {
-        GameManager.instance.RemoveFood(food);
-        pb.FoodFound();
-        Destroy(food);
     }
 }

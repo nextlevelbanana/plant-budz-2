@@ -528,7 +528,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   button: {fileID: 1010132350}
-  buttonTxt: {fileID: 2030600952}
+  buttonTxt: {fileID: 1177400707}
 --- !u!114 &343777250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1988,7 +1988,7 @@ GameObject:
   - component: {fileID: 1155190365}
   - component: {fileID: 1155190364}
   - component: {fileID: 1155190366}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: TopCol
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2306,7 +2306,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Debug
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2333,7 +2333,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 55
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2446,7 +2446,7 @@ GameObject:
   - component: {fileID: 1236755796}
   - component: {fileID: 1236755797}
   - component: {fileID: 1236755798}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: BottomCol
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3147,7 +3147,7 @@ Transform:
   m_GameObject: {fileID: 1654478681}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.95, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1236755796}
@@ -3257,7 +3257,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 263961703515130218, guid: 5c52824ca237c54408897e71839bf0a6, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 263961703515130219, guid: 5c52824ca237c54408897e71839bf0a6, type: 3}
       propertyPath: cursor
@@ -3269,7 +3269,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 263961703515130219, guid: 5c52824ca237c54408897e71839bf0a6, type: 3}
       propertyPath: topMost
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 263961703515130219, guid: 5c52824ca237c54408897e71839bf0a6, type: 3}
       propertyPath: windows
@@ -3392,7 +3392,7 @@ GameObject:
   - component: {fileID: 1924306034}
   - component: {fileID: 1924306033}
   - component: {fileID: 1924306035}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: RightCol
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3497,7 +3497,7 @@ GameObject:
   - component: {fileID: 1953952573}
   - component: {fileID: 1953952572}
   - component: {fileID: 1953952574}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: LeftCol
   m_TagString: Untagged
   m_Icon: {fileID: 0}
