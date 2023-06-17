@@ -80,6 +80,8 @@ public class PetBehavior : MonoBehaviour
             SetFoodTarget();
         }
 
+        GameManager.instance.debugText.text = behavior.ToString();
+
         AnimUpdate();
     }
 
