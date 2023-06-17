@@ -22,7 +22,6 @@ public class ScoreHole : MonoBehaviour
                 (Camera.main.ScreenToWorldPoint(new Vector2(0, 0)).x, Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0)).x);
 
             transform.position = new Vector2(spawnX, spawnY);
-            //Instantiate(banana, spawnPosition, Quaternion.identity);
         }
     }
 
