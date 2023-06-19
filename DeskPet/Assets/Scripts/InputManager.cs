@@ -7,17 +7,28 @@ using System;
 public class InputManager : MonoBehaviour
 {
     //assign button behavior + icon based on current phase
-    //phase 1: water
-    //phase 2: pet, swatter, clean up?, 
+    //'If time allows' - add swatter and cleanup tools
+
+
+    //Current logic: 1 (key) = water, 2 = petting, 3 = food, 4 = fling
     public InputAction actionKey;
 
     public DragAndShoot shootScript;
 
     private int curButton = 0;
+    public PetInteractionReaction petReaction;
+    private GameObject currentTool = null;
 
-    [Header("Cursor Settings")]
-    public Texture2D pettingCursor;
-    private Vector2 cursorHotSpot = Vector2.zero;
+    [Header("Water")]
+    public ParticleSystem waterParticles;
+    private BoxCollider2D waterTrig;
+
+    private void Start()
+    {
+        waterParticles.Pause();
+        waterTrig = waterParticles.GetComponent<BoxCollider2D>();
+        waterTrig.enabled = false;
+    }
 
     private void OnEnable()
     {
@@ -36,6 +47,17 @@ public class InputManager : MonoBehaviour
         if (actionKey.IsPressed()) { ActionKeyPress(); }
 
         if (actionKey.WasReleasedThisFrame()) { ActionKeyRelease(); }
+
+        if(currentTool != null)
+        {
+            ToolFollowCursor();
+        }
+    }
+
+    private void ToolFollowCursor()
+    {
+        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        currentTool.transform.position = mousePos;
     }
 
     private void NumericInput()
@@ -56,15 +78,23 @@ public class InputManager : MonoBehaviour
         switch (curButton)
         {
             case 1:
-                Press1();
+                InitWater();
                 break;
 
             case 2:
                 Press2();
                 break;
 
+            case 3:
+                //press 3
+                break;
+
+            case 4:
+                Press4();
+                break;
+
             default:
-                print("default key");
+                GameManager.instance.SetDebugMessage("No tool selected");
                 break;
         }
     }
@@ -74,33 +104,46 @@ public class InputManager : MonoBehaviour
         switch (curButton)
         {
             case 1:
-                Release1();
+                WaterOff();
+                break;
+
+            case 4:
+                Release4();
                 break;
         }
 
-        DefaultCursor();
     }
 
-    private void DefaultCursor()
+    private void InitWater()
     {
-        Cursor.SetCursor(null, cursorHotSpot, CursorMode.Auto);
+        //seems unnecessary but it's a quirk of the particle system...
+        if (!waterParticles.isPlaying) { waterParticles.Play(); }
+        waterTrig.enabled = true;
+        currentTool = waterParticles.gameObject;
     }
 
-    public void Press1()
+    private void WaterOff()
     {
-        shootScript.StartDrag();
-    }
-
-    public void Release1()
-    {
-        shootScript.EndDrag();
+        if (!waterParticles.isStopped) { waterParticles.Stop(); }
+        waterTrig.enabled = false;
     }
 
     public void Press2()
     {
-        Cursor.SetCursor(pettingCursor, cursorHotSpot, CursorMode.Auto);
-        print("swap cursor");
+
     }
+
+    public void Press4()
+    {
+        shootScript.StartDrag();
+    }
+
+    public void Release4()
+    {
+        shootScript.EndDrag();
+    }
+
+
 
 
 }

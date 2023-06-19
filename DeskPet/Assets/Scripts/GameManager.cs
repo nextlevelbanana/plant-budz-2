@@ -7,20 +7,51 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     //mutation / progression
-
-    //stats - hunger, happiness, obscure measurement
     public static GameManager instance;
     public HUD display;
     public int curPhase = 0;
-
+    public PetEvolution petEvo;
     public List<GameObject> foodObjectsOnScreen = new List<GameObject>();
     public List<GameObject> dynamicObjectsOnScreen = new List<GameObject>();
 
     public TextMeshProUGUI debugText;
 
+    [Header("Stats Tracked")]
+    public int foodEaten = 0;
+    public float happiness = 0f;
+    public int timesWatered = 0;
+    public int timesFlung = 0;
+    public int timesPet = 0;
+    public float happyMod = 1f;
+    public float sadMod = 1f;
+
+    [Header("Play Timer")]
+    public bool shouldTime = true;
+    [SerializeField] float phaseTimer = 0f;
+    [SerializeField] float[] progressionTimesPerPhase;
+
     private void Awake()
     {
         instance = this;
+    }
+
+    private void Update()
+    {
+        if (shouldTime)
+        {
+            phaseTimer += Time.deltaTime;
+        }
+    }
+
+    public void SetDebugMessage(string message)
+    {
+        debugText.text = message;
+        Invoke("ClearDebugMessage", 3f);
+    }
+
+    private void ClearDebugMessage()
+    {
+        debugText.text = "";
     }
 
     public GameObject GetClosestFood(Transform petTransform)
@@ -39,13 +70,54 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        debugText.text = "Hunting: " + closest.name;
         return closest;
     }
 
     public void RemoveFood(GameObject food)
     {
         foodObjectsOnScreen.Remove(food);
+    }
+
+    public void HappinessCalc()
+    {
+        //pretty rudimentary - feel free to revise!
+        happiness = (foodEaten + timesPet) * happyMod / (timesWatered + timesFlung) * sadMod;
+        print("happiness is: " + happiness);
+    }
+
+    public void EvolutionCheck()
+    {
+        if (shouldTime)
+        {
+            if(phaseTimer <= progressionTimesPerPhase[curPhase])
+            {
+                SetDebugMessage("Time threshold for evolution not met.");
+                return;
+            }
+        }
+
+        HappinessCalc();
+
+        if(curPhase == 0)
+        {
+            //just checking times watered
+            happiness = timesWatered;
+        }
+
+        if(petEvo.ShouldEvolve(happiness, curPhase))
+        {
+            curPhase++;
+            ClearTrackedStats();
+        }
+    }
+
+    private void ClearTrackedStats()
+    {
+        happiness = 0f;
+        foodEaten = 0;
+        timesPet = 0;
+        timesWatered = 0;
+        timesFlung = 0;
     }
 
 

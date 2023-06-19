@@ -5,17 +5,16 @@ using TMPro;
 
 public class PetBehavior : MonoBehaviour
 {
-
-
-    //More behavior ideas welcome. External control stops everything from running (for cutscenes, etc.)
-    //Different stats for cat & bunny are simple, but do we want more than that...?
     public enum currentBehavior { Patrol, FindFood, ExternalControl, WallClimb, EatFood };
     public currentBehavior behavior;
 
     [SerializeField] Transform curTarget = null;
     [SerializeField] LayerMask groundLayer;
     private Rigidbody2D rb;
+
+    [Header("Animation")]
     private Animator anim;
+    private SpriteRenderer sr;
 
     [Header("Trigger")]
     [SerializeField] PetTrigger trigger;
@@ -55,6 +54,7 @@ public class PetBehavior : MonoBehaviour
 
     private void Awake()
     {
+        sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         StartBehavior(currentBehavior.Patrol);
         anim = GetComponent<Animator>();
@@ -62,8 +62,10 @@ public class PetBehavior : MonoBehaviour
 
     private void Update()
     {
-        GameManager.instance.debugText.text = behavior.ToString();
-       
+        //GameManager.instance.SetDebugMessage(behavior.ToString());
+        //new method in GameMan (if ya want!) Should make it easier for both of us to have our own debugs
+        //had to comment out to test different logs
+
         switch (behavior)
         {
             case currentBehavior.ExternalControl:
@@ -87,8 +89,6 @@ public class PetBehavior : MonoBehaviour
             //SetFoodTarget();
         }
 
-        GameManager.instance.debugText.text = behavior.ToString();
-
         AnimUpdate();
     }
 
@@ -98,6 +98,8 @@ public class PetBehavior : MonoBehaviour
         if (isMoving)
         {
             rb.velocity = moveDir;
+            //idle sprite was always facing right - this flips it based on current dir
+            sr.flipX = moveDir.x < 0;
             //startMoving = false;
         }
         if (stopMoving) {
@@ -120,7 +122,7 @@ public class PetBehavior : MonoBehaviour
 
     private void OnBecameInvisible()
     {
-        print("Pet Off Screen");
+        GameManager.instance.SetDebugMessage("Pet off screen. Resetting.");
         PetReset();
     }
 
@@ -174,7 +176,8 @@ public class PetBehavior : MonoBehaviour
 
     private void IdlePatrol()
     {
-        GameManager.instance.debugText.text = timeToMove.ToString() + rb.velocity.ToString();
+        //Temp comment out to test my own logs
+        //GameManager.instance.SetDebugMessage(timeToMove.ToString() + rb.velocity.ToString());
 
         if (isMoving)
         {

@@ -1,43 +1,83 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class PetEvolution : MonoBehaviour
 {
     private Animator anim;
-    public AnimatorController[] animators;
-    public int nextAnimatorController = 0;
-    //Idea is the evolution animation will contain a function that triggers the next anim swap.
-    //This will have to pull info from gameman upon starting evolution?
 
-    //Hold of on anims until we know exactly what parameters we're passing through and what triggers evolution
+    //0 = plant, 1 = blob, 2 = cat, 3 = bunny. Not sure about endings yet.
+    public RuntimeAnimatorController[] animators;
+    public int nextAnimatorController = 0;
+
+    [SerializeField] float plantToBlobScore = 0f;
+    [SerializeField] float blobToAnimalScore = 0f;
+    [SerializeField] float finalEvolutionScore = 0f;
+
+    //Idea is the evolution animation will contain a function that triggers the next anim swap.
 
     private void Awake()
     {
-        SwapController();
         anim = GetComponent<Animator>();
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            nextAnimatorController++;
-            InitEvolve();
-        }
+        SwapController();
     }
 
     public void InitEvolve()
     {
-        //get gameman tracked info
         anim.SetTrigger("Evolve");
-        Invoke("SwapController", 1.5f);
+        //animation will call swap controller function
     }
 
     public void SwapController()
     {
+        //Called through animator!
         anim.runtimeAnimatorController = animators[nextAnimatorController];
+    }
+
+    public bool ShouldEvolve(float happiness, int phase)
+    {
+        switch (phase)
+        {
+            case 0:
+                //plant to blob
+                if(happiness >= plantToBlobScore)
+                {
+                    nextAnimatorController = 1;
+                    InitEvolve();
+                    return true;
+                }
+                return false;
+
+            case 1:
+                //blob to cat / bunny
+                if(happiness >= blobToAnimalScore)
+                {
+                    nextAnimatorController = 2;
+                    //InitEvolve();
+                    print("Set next anim controller to cat");
+                    return true;
+                }
+
+                if(happiness < blobToAnimalScore)
+                {
+                    nextAnimatorController = 3;
+                    //InitEvolve();
+                    print("Set next anim controller to bunny");
+                    return true;
+                }
+
+                return false;
+
+            case 2:
+                //final evo
+                if(happiness >= finalEvolutionScore)
+                {
+                    return true;
+                }
+                return false;
+        }
+
+        return false;
     }
 
 
