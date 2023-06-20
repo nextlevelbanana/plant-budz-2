@@ -30,6 +30,9 @@ public class InputManager : MonoBehaviour
 
     [Header("Food")]
     public GameObject foodIcon;
+    public GameObject[] possibleFood;
+    private int curFood = 0, maxFood;
+    private bool stopFood = false;
 
     [Header("Fling")]
     public GameObject flingIcon;
@@ -37,6 +40,7 @@ public class InputManager : MonoBehaviour
 
     private void Start()
     {
+        maxFood = possibleFood.Length;
         waterParticles.Pause();
         waterTrig = waterParticles.GetComponent<BoxCollider2D>();
         waterTrig.enabled = false;
@@ -200,10 +204,26 @@ public class InputManager : MonoBehaviour
     {
         foodIcon.SetActive(true);
         currentTool = foodIcon;
+        if (stopFood) { return; }
+        Vector3 foodPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        foodPos.z = 0;
+        Instantiate(possibleFood[curFood], foodPos, Quaternion.identity, null);
+        FoodCheck();
+        stopFood = true;
+    }
+
+    private void FoodCheck()
+    {
+        curFood++;
+        if(curFood >= maxFood)
+        {
+            curFood = 0;
+        }
     }
 
     public void ReleaseFood()
     {
+        stopFood = false;
         foodIcon.SetActive(false);
     }
 

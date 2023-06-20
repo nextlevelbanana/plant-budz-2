@@ -32,12 +32,19 @@ public class DragAndShoot : MonoBehaviour
 
     public void EndDrag()
     {
-        petReaction.PetStartFling();
+
+        
         endDrag = cam.ScreenToWorldPoint(Input.mousePosition);
         endDrag.z = 0f;
 
-        force = new Vector2(Mathf.Clamp(startDrag.x - endDrag.x, minPower.x, maxPower.x), Mathf.Clamp(startDrag.y - endDrag.y, minPower.y, maxPower.y));
-        rb.AddForce(force * shotPower, ForceMode2D.Impulse);
+
+        if (Application.isFocused)
+        {
+            petReaction.PetStartFling();
+            force = new Vector2(Mathf.Clamp(startDrag.x - endDrag.x, minPower.x, maxPower.x), Mathf.Clamp(startDrag.y - endDrag.y, minPower.y, maxPower.y));
+            rb.AddForce(force * shotPower, ForceMode2D.Impulse);
+        }
+
 
         ld.EndLine();
     }

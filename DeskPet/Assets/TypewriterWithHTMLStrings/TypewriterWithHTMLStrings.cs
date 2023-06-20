@@ -22,10 +22,10 @@ public class TypewriterWithHTMLStrings : MonoBehaviour
 
 	void Reset()
 	{
-		print("reset text");
 		originalString = initialString;
 		cursor = "_";
 		interval = 0.05f;
+		SetText("Stinky stinky");
 	}
 
 	int GetPayloadLength( string s)
@@ -119,4 +119,9 @@ public class TypewriterWithHTMLStrings : MonoBehaviour
 		// remove cursor
 		output.text = originalString;
 	}
+
+	public void SetText(string text)
+    {
+		originalString = text;
+    }
 }

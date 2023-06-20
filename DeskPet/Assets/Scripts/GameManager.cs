@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour
     public int timesPet = 0;
     public float happyMod = 1f;
     public float sadMod = 1f;
+    private int totalInteractions = 0;
+    public int requiredInteractionsForEvolution = 1;
 
     [Header("Play Timer")]
     public bool shouldTime = true;
@@ -33,6 +35,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        DontDestroyOnLoad(this);
     }
 
     private void Update()
@@ -81,7 +84,8 @@ public class GameManager : MonoBehaviour
     public void HappinessCalc()
     {
         //pretty rudimentary - feel free to revise!
-        happiness = (foodEaten + timesPet) * happyMod / (timesWatered + timesFlung) * sadMod;
+        totalInteractions = foodEaten + timesPet + timesFlung + timesWatered;
+        happiness = totalInteractions / (timesFlung + timesWatered);
         print("happiness is: " + happiness);
     }
 
@@ -98,9 +102,14 @@ public class GameManager : MonoBehaviour
 
         HappinessCalc();
 
+        //ensure minimum interaction?
+        if(totalInteractions < requiredInteractionsForEvolution) 
+        {
+            return;
+        }
+
         if(curPhase == 0)
         {
-            //just checking times watered
             happiness = timesWatered;
         }
 
@@ -119,6 +128,7 @@ public class GameManager : MonoBehaviour
         timesPet = 0;
         timesWatered = 0;
         timesFlung = 0;
+        totalInteractions = 0;
     }
 
 

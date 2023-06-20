@@ -9,7 +9,6 @@ public class PetEvolution : MonoBehaviour
     //0 = plant, 1 = blob, 2 = cat, 3 = bunny. Not sure about endings yet.
     public RuntimeAnimatorController[] animators;
     public int nextAnimatorController = 0;
-
     [SerializeField] float plantToBlobScore = 0f;
     [SerializeField] float blobToAnimalScore = 0f;
     [SerializeField] float finalEvolutionScore = 0f;
@@ -55,15 +54,15 @@ public class PetEvolution : MonoBehaviour
 
             case 1:
                 //blob to cat / bunny
-                if(happiness >= blobToAnimalScore)
+                if(happiness <= blobToAnimalScore)
                 {
                     nextAnimatorController = 2;
-                    //InitEvolve();
+                    InitEvolve();
                     print("Set next anim controller to cat");
                     return true;
                 }
 
-                if(happiness < blobToAnimalScore)
+                if(happiness > blobToAnimalScore)
                 {
                     nextAnimatorController = 3;
                     //InitEvolve();
