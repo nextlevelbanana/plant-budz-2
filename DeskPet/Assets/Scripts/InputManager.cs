@@ -8,26 +8,39 @@ public class InputManager : MonoBehaviour
 {
     //assign button behavior + icon based on current phase
     //'If time allows' - add swatter and cleanup tools
+    //fade function could be nice for the icons
+    //endallfunctions needs tweaking
 
-
-    //Current logic: 1 (key) = water, 2 = petting, 3 = food, 4 = fling
+    //Current logic: 1 = water, 2 = petting, 3 = food, 4 = fling
     public InputAction actionKey;
-
-    public DragAndShoot shootScript;
-
     private int curButton = 0;
     public PetInteractionReaction petReaction;
+    public int highestToolAllowed = 1;
     private GameObject currentTool = null;
+    [SerializeField] LayerMask playerLayer;
+    public bool ignoreInput = false;
 
     [Header("Water")]
+    public GameObject waterIcon;
     public ParticleSystem waterParticles;
     private BoxCollider2D waterTrig;
+
+    [Header("Petting")]
+    public GameObject pettingIcon;
+
+    [Header("Food")]
+    public GameObject foodIcon;
+
+    [Header("Fling")]
+    public GameObject flingIcon;
+    public DragAndShoot shootScript;
 
     private void Start()
     {
         waterParticles.Pause();
         waterTrig = waterParticles.GetComponent<BoxCollider2D>();
         waterTrig.enabled = false;
+        EndAllFunctions();
     }
 
     private void OnEnable()
@@ -42,6 +55,10 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
+        if (!Application.isFocused) { EndAllFunctions(); }
+
+        if (ignoreInput) { return; }
+
         NumericInput();
 
         if (actionKey.IsPressed()) { ActionKeyPress(); }
@@ -54,6 +71,20 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    private bool isMouseOverPet()
+    {
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var hits = Physics2D.GetRayIntersectionAll(ray, 100f, playerLayer);
+        foreach(var hit in hits)
+        {
+            if(hit.collider.tag == "Player")
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
     private void ToolFollowCursor()
     {
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -68,6 +99,7 @@ public class InputManager : MonoBehaviour
             bool is_a_number = Int32.TryParse(Input.inputString, out number);
             if (is_a_number && number >= 0 && number < 10)
             {
+                if(number > highestToolAllowed) { number = 0; }
                 curButton = number;
             }
         }
@@ -77,24 +109,24 @@ public class InputManager : MonoBehaviour
     {
         switch (curButton)
         {
+            case 0:
+                GameManager.instance.SetDebugMessage("No tool selected");
+                break;
+
             case 1:
                 InitWater();
                 break;
 
             case 2:
-                Press2();
+                InitPetting();
                 break;
 
             case 3:
-                //press 3
+                InitFood();
                 break;
 
             case 4:
-                Press4();
-                break;
-
-            default:
-                GameManager.instance.SetDebugMessage("No tool selected");
+                InitFling();
                 break;
         }
     }
@@ -104,46 +136,88 @@ public class InputManager : MonoBehaviour
         switch (curButton)
         {
             case 1:
-                WaterOff();
+                ReleaseWater();
+                break;
+
+            case 2:
+                ReleasePetting();
+                break;
+
+            case 3:
+                ReleaseFood();
                 break;
 
             case 4:
-                Release4();
+                ReleaseFling();
                 break;
         }
 
     }
 
+    public void EndAllFunctions()
+    {
+        //release fling triggers dazed anim - find workaround
+        ReleaseWater();
+        ReleasePetting();
+        ReleaseFood();
+        ReleaseFling();
+        //currentTool = null;
+        //curButton = 0;
+    }
+
     private void InitWater()
     {
         //seems unnecessary but it's a quirk of the particle system...
+        waterIcon.SetActive(true);
         if (!waterParticles.isPlaying) { waterParticles.Play(); }
         waterTrig.enabled = true;
-        currentTool = waterParticles.gameObject;
+        currentTool = waterIcon;
     }
 
-    private void WaterOff()
+    private void ReleaseWater()
     {
-        if (!waterParticles.isStopped) { waterParticles.Stop(); }
+        if (!waterParticles.isStopped) { waterParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting); }
         waterTrig.enabled = false;
+        waterIcon.SetActive(false);
     }
 
-    public void Press2()
+    public void InitPetting()
     {
-
+        pettingIcon.SetActive(true);
+        currentTool = pettingIcon;
+        if (isMouseOverPet())
+        {
+            petReaction.PetPetted();
+        }
     }
 
-    public void Press4()
+    public void ReleasePetting()
     {
+        pettingIcon.SetActive(false);
+    }
+
+    private void InitFood()
+    {
+        foodIcon.SetActive(true);
+        currentTool = foodIcon;
+    }
+
+    public void ReleaseFood()
+    {
+        foodIcon.SetActive(false);
+    }
+
+    public void InitFling()
+    {
+        flingIcon.SetActive(true);
         shootScript.StartDrag();
+        currentTool = flingIcon;
     }
 
-    public void Release4()
+    public void ReleaseFling()
     {
+        flingIcon.SetActive(false);
         shootScript.EndDrag();
     }
-
-
-
 
 }

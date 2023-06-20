@@ -16,7 +16,7 @@ public class PetTrigger : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (ignoreCollisions) { return; }
+        if (ignoreCollisions || pb.behavior == PetBehavior.currentBehavior.ExternalControl) { return; }
 
         if(other.tag == "Wall")
         {
@@ -26,17 +26,17 @@ public class PetTrigger : MonoBehaviour
         if(other.tag == "Food")
         {
             pb.StartBehavior(PetBehavior.currentBehavior.EatFood, other);
-            print("YUMMY YUMMY");
         }
 
         if(other.tag == "Water")
         {
             petReaction.PetWatered();
-            StartCoroutine(IgnoreCollision(1.5f));
         }
     }
+
     public IEnumerator IgnoreCollision(float ignoreTime)
     {
+        //if (!col.enabled) { yield break; }
         col.enabled = false;
         ignoreCollisions = true;
 

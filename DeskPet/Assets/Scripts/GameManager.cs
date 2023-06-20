@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public PetEvolution petEvo;
     public List<GameObject> foodObjectsOnScreen = new List<GameObject>();
     public List<GameObject> dynamicObjectsOnScreen = new List<GameObject>();
-
+    [SerializeField] InputManager input;
     public TextMeshProUGUI debugText;
 
     [Header("Stats Tracked")]
@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
         {
             if(phaseTimer <= progressionTimesPerPhase[curPhase])
             {
-                SetDebugMessage("Time threshold for evolution not met.");
+                SetDebugMessage("Time threshold for phase not met.");
                 return;
             }
         }
@@ -106,8 +106,9 @@ public class GameManager : MonoBehaviour
 
         if(petEvo.ShouldEvolve(happiness, curPhase))
         {
-            curPhase++;
             ClearTrackedStats();
+            curPhase++;
+            input.highestToolAllowed = 4;
         }
     }
 

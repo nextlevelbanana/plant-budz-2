@@ -12,9 +12,10 @@ public class DragAndShoot : MonoBehaviour
     [SerializeField] Vector2 force;
     private Vector3 startDrag, endDrag;
     private Camera cam;
-
+    private PetInteractionReaction petReaction;
     private void Start()
     {
+        petReaction = GetComponent<PetInteractionReaction>();
         rb = GetComponent<Rigidbody2D>();
         ld = GetComponent<LineDrag>();
         cam = Camera.main;
@@ -31,6 +32,7 @@ public class DragAndShoot : MonoBehaviour
 
     public void EndDrag()
     {
+        petReaction.PetStartFling();
         endDrag = cam.ScreenToWorldPoint(Input.mousePosition);
         endDrag.z = 0f;
 

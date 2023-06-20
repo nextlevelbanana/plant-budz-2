@@ -11,6 +11,7 @@ public class PetBehavior : MonoBehaviour
     [SerializeField] Transform curTarget = null;
     [SerializeField] LayerMask groundLayer;
     private Rigidbody2D rb;
+    private TextMeshProUGUI hudButton;
 
     [Header("Animation")]
     private Animator anim;
@@ -24,14 +25,14 @@ public class PetBehavior : MonoBehaviour
     [SerializeField] float moveSpeed = 1f;
     [SerializeField] float timeToMove = 2f;
     [SerializeField] float timeToPause = 2f;
-    private float pauseTimeHold = 2f;
-    private float moveTimeHold = 2f;
+    //private float pauseTimeHold = 2f;
+    //private float moveTimeHold = 2f;
     private float minMoveTime = 2f;
     private float maxMoveTime = 10f;
-    private float minPauseTime = 2f;
-    private float maxPauseTime = 10f;
-    private bool isMoving;
-    private bool stopMoving;
+    //private float minPauseTime = 2f;
+    //private float maxPauseTime = 10f;
+    [SerializeField] private bool isMoving;
+    [SerializeField] private bool stopMoving;
     [SerializeField] Vector2 moveDir = Vector2.zero;
     private Vector2 lastDir = Vector2.zero;
 
@@ -50,7 +51,11 @@ public class PetBehavior : MonoBehaviour
     [SerializeField] float chaseSpeedMod = 0.75f;
     [SerializeField] float eatPauseTime = 2f;
 
-    private TextMeshProUGUI hudButton;
+    [Header("External Control")]
+    private currentBehavior lastBehavior = currentBehavior.ExternalControl;
+    private bool initialGroundCheck = true;
+
+    //IF we're doing climbing, it should only climb windows now
 
     private void Awake()
     {
@@ -94,16 +99,22 @@ public class PetBehavior : MonoBehaviour
 
     private void FixedUpdate()
     {
-
         if (isMoving)
         {
-            rb.velocity = moveDir;
-            //idle sprite was always facing right - this flips it based on current dir
+            moveDir.y = rb.velocity.y;
+            //Feel free to mess with this - the results are pretty indistinguishable
+            //BUT if we do anything more than gravity and horizontal movement (e.g. climbing) it'll get choppy
+            rb.AddForce(moveDir, ForceMode2D.Force);
+
+            //rb.velocity = moveDir;
+
             sr.flipX = moveDir.x < 0;
             //startMoving = false;
         }
-        if (stopMoving) {
-            rb.velocity = Vector2.zero;
+        if (stopMoving) 
+        {
+            rb.velocity = new Vector2(Mathf.Lerp(rb.velocity.x, 0, .05f * Time.fixedDeltaTime), rb.velocity.y);
+            //rb.velocity = Vector2.zero;
             stopMoving = false;
         }
 
@@ -138,7 +149,6 @@ public class PetBehavior : MonoBehaviour
 
     public void PetReset()
     {
-        //Not sure if we want to check to see if pet overlaps collider? If it does, it will just shoot out and be fine
         for (int i = 0; i < 10; i++)
         {
             float spawnY = Random.Range
@@ -157,13 +167,68 @@ public class PetBehavior : MonoBehaviour
         anim.SetFloat("VelocityX", rb.velocity.x);
     }
 
+    public void SetExternalControl(float triggerOffTime)
+    {
+        if (behavior == currentBehavior.ExternalControl) { return; }
+        lastBehavior = behavior;
+        StartBehavior(currentBehavior.ExternalControl);
+        isMoving = false;
+        climbing = false;
+        findingFood = false;
+        StartCoroutine(trigger.IgnoreCollision(triggerOffTime));
+    }
 
+    public void EndExternalControl()
+    {
+        print("end ex.c, starting: " + lastBehavior.ToString());
+        StartBehavior(lastBehavior);
+    }
+
+    #region Fling
+
+    public void StartFling()
+    {
+        if (behavior == currentBehavior.ExternalControl) { return; }
+        lastBehavior = behavior;
+        StartBehavior(currentBehavior.ExternalControl);
+        StartCoroutine(CheckEndFling());
+        isMoving = false;
+        climbing = false;
+        findingFood = false;
+    }
+
+    private IEnumerator CheckEndFling()
+    {
+        //small pause needed to get pet into the air, then see when it lands
+        if (initialGroundCheck) { yield return new WaitForSeconds(.5f); }
+        initialGroundCheck = false;
+
+        while (!isGrounded())
+        {
+            yield return null;
+        }
+
+        EndFling();
+    }
+
+    public void EndFling()
+    {
+        StartBehavior(lastBehavior);
+        initialGroundCheck = true;
+    }
+
+    #endregion
 
     #region Patrol
 
-    private void StartMoving() {
+    private void StartMoving()
+    {
+        //Noted issue is random never feels 'random'
+        //pet will end up charging into a wall for 4+ move cycles
+        //not a huge deal but a fix if we have time!
         timeToPause = Random.Range(minMoveTime, maxMoveTime);
         moveDir = Random.Range(0f,1f) > 0.5f ? Vector2.right : Vector2.left;
+        moveDir *= moveSpeed;
         isMoving = true;
         //startMoving = true;
     }
@@ -271,7 +336,11 @@ public class PetBehavior : MonoBehaviour
 
     public void StartBehavior(currentBehavior newBehavior, Collider2D obj = null) {
         behavior = newBehavior;
-        switch (newBehavior) {
+        switch (newBehavior)
+        {
+            case currentBehavior.ExternalControl:
+                break;
+
             case currentBehavior.Patrol:
                 StartMoving();
                 break;
@@ -285,12 +354,7 @@ public class PetBehavior : MonoBehaviour
         }
     }
 
-        private void DestroyFood(GameObject food)
-    {
-        GameManager.instance.RemoveFood(food);
-        FoodFound();
-        Destroy(food);
-    }
+
 
     #region Find Food
     private void SetFoodTarget()
@@ -321,9 +385,17 @@ public class PetBehavior : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x * 0.15f, rb.velocity.y);
         rb.gravityScale = 1;
         anim.SetTrigger("Eating");
-        StartCoroutine(ReturnToPatrol(eatPauseTime));
+        //StartCoroutine(ReturnToPatrol(eatPauseTime));
         curTarget = null;
         findingFood = false;
+    }
+    private void DestroyFood(GameObject food)
+    {
+        GameManager.instance.RemoveFood(food);
+        FoodFound();
+        Destroy(food);
+        //hard set - found food coroutine get sticky with flings
+        StartBehavior(currentBehavior.Patrol, null);
     }
 
     #endregion

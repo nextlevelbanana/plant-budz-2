@@ -5,7 +5,7 @@ using UnityEngine;
 public class PetEvolution : MonoBehaviour
 {
     private Animator anim;
-
+    private PetBehavior pb;
     //0 = plant, 1 = blob, 2 = cat, 3 = bunny. Not sure about endings yet.
     public RuntimeAnimatorController[] animators;
     public int nextAnimatorController = 0;
@@ -19,11 +19,14 @@ public class PetEvolution : MonoBehaviour
     private void Awake()
     {
         anim = GetComponent<Animator>();
-        SwapController();
+        pb = GetComponent<PetBehavior>();
+        anim.runtimeAnimatorController = animators[nextAnimatorController];
     }
 
     public void InitEvolve()
     {
+        //turn off trigger, ignore input
+        pb.SetExternalControl(4f);
         anim.SetTrigger("Evolve");
         //animation will call swap controller function
     }
@@ -31,6 +34,8 @@ public class PetEvolution : MonoBehaviour
     public void SwapController()
     {
         //Called through animator!
+        //evolution is finished
+        pb.EndExternalControl();
         anim.runtimeAnimatorController = animators[nextAnimatorController];
     }
 

@@ -62,6 +62,7 @@
     <Compile Include="Assets\Desktopia\Examples\05_DragDrop\DragDrop.cs" />
     <Compile Include="Assets\Scripts\Pet\PetBehavior.cs" />
     <Compile Include="Assets\Scripts\Pet\PetInteractionReaction.cs" />
+    <Compile Include="Assets\Scripts\WaterParticleFollow.cs" />
     <Compile Include="Assets\Desktopia\Examples\03_Inputs\InputListener.cs" />
     <Compile Include="Assets\Scripts\TextAssets\WobblyText.cs" />
     <Compile Include="Assets\Scripts\DragAndShoot.cs" />
