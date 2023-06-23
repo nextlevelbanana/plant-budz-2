@@ -6,70 +6,53 @@ using System;
 
 public class InputManager : MonoBehaviour
 {
-    //assign button behavior + icon based on current phase
-    //'If time allows' - add swatter and cleanup tools
-    //fade function could be nice for the icons
-    //endallfunctions needs tweaking
 
-    //Current logic: 1 = water, 2 = petting, 3 = food, 4 = fling
-    public InputAction actionKey;
+    //separate function for just activating cursor & setting current tool. second sprite for using it...
+   
     private int curButton = 0;
     public PetInteractionReaction petReaction;
-    public int highestToolAllowed = 1;
     private GameObject currentTool = null;
     [SerializeField] LayerMask playerLayer;
-    public bool ignoreInput = false;
+    //public GameObject[] cursors;
+    public CursorIcons[] cursors;
+
+    [Header("Buttons")]
+    public UIButtons[] uiButtons;
+    private bool newButtonSelectionIgnore = false;
 
     [Header("Water")]
-    public GameObject waterIcon;
     public ParticleSystem waterParticles;
     private BoxCollider2D waterTrig;
 
-    [Header("Petting")]
-    public GameObject pettingIcon;
-
     [Header("Food")]
-    public GameObject foodIcon;
     public GameObject[] possibleFood;
     private int curFood = 0, maxFood;
     private bool stopFood = false;
 
     [Header("Fling")]
-    public GameObject flingIcon;
     public DragAndShoot shootScript;
+
+    
 
     private void Start()
     {
+        Desktopia.Inputs.AddOnMouseDown(0, MouseDown);
+        Desktopia.Inputs.AddOnMouseUp(0, MouseRelease);
         maxFood = possibleFood.Length;
         waterParticles.Pause();
         waterTrig = waterParticles.GetComponent<BoxCollider2D>();
         waterTrig.enabled = false;
+        StarterButtons();
         EndAllFunctions();
     }
 
-    private void OnEnable()
-    {
-        actionKey.Enable();
-    }
 
-    private void OnDisable()
-    {
-        actionKey.Disable();
-    }
 
     private void Update()
     {
-        if (!Application.isFocused) { EndAllFunctions(); }
+        if (Desktopia.Inputs.GetMouseButton(0) && !newButtonSelectionIgnore) { ActionKeyPress(); }
 
-        if (ignoreInput) { return; }
-
-        NumericInput();
-
-        if (actionKey.IsPressed()) { ActionKeyPress(); }
-
-        if (actionKey.WasReleasedThisFrame()) { ActionKeyRelease(); }
-
-        if(currentTool != null)
+        if(currentTool != null || curButton != 0)
         {
             ToolFollowCursor();
         }
@@ -77,40 +60,90 @@ public class InputManager : MonoBehaviour
 
     private bool isMouseOverPet()
     {
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        var hits = Physics2D.GetRayIntersectionAll(ray, 100f, playerLayer);
-        foreach(var hit in hits)
-        {
-            if(hit.collider.tag == "Player")
-            {
-                return true;
-            }
-        }
+        Vector3 clickLoc = Camera.main.ScreenToWorldPoint(Desktopia.Cursor.Position);
+        clickLoc = new Vector2(clickLoc.x, -clickLoc.y);
+        Collider2D col = Physics2D.OverlapCircle(clickLoc, 0.1f, playerLayer);
+        if (col == null) { return false; }
+
+        if(col.tag == "Player") { return true; }
 
         return false;
     }
+
+    public void MouseDown()
+    {
+        Vector3 clickLoc = Camera.main.ScreenToWorldPoint(Desktopia.Cursor.Position);
+        clickLoc = new Vector2(clickLoc.x, -clickLoc.y);
+        Collider2D col = Physics2D.OverlapCircle(clickLoc, 0.1f, playerLayer);
+        if (col == null) { return; }
+
+        if (col.TryGetComponent<UIButtons>(out UIButtons button))
+        {
+            //clicked button
+            newButtonSelectionIgnore = true;
+            curButton = button.SetSelected();
+            SwapIcon();
+            cursors[curButton].IdleTool();
+            button.SetSelected();
+            DeselectButtons();
+        }
+    }
+
+    public void MouseRelease()
+    {
+        if (newButtonSelectionIgnore) 
+        {
+            newButtonSelectionIgnore = false;
+            if(curButton == 4) { return; }
+        }
+        ActionKeyRelease();
+    }
     private void ToolFollowCursor()
     {
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Desktopia.Cursor.Position);
+        mousePos = new Vector2(mousePos.x, -mousePos.y);
         currentTool.transform.position = mousePos;
     }
 
-    private void NumericInput()
+    private void DeselectButtons()
     {
-        if (Input.inputString != "")
+        for (int i = 0; i < uiButtons.Length; i++)
         {
-            int number;
-            bool is_a_number = Int32.TryParse(Input.inputString, out number);
-            if (is_a_number && number >= 0 && number < 10)
+            if (!uiButtons[i].gameObject.activeInHierarchy) { return; }
+
+            if (uiButtons[i].buttonNum != curButton)
             {
-                if(number > highestToolAllowed) { number = 0; }
-                curButton = number;
+                uiButtons[i].SetUnselected();
             }
+        }
+    }
+
+    private void StarterButtons()
+    {
+        uiButtons[1].gameObject.SetActive(false);
+        uiButtons[2].gameObject.SetActive(false);
+        uiButtons[3].gameObject.SetActive(false);
+        /*for(int i = 0; i < uiButtons.Length; i++)
+        {
+            if (uiButtons[i].buttonNum != 1)
+            {
+                uiButtons[i].gameObject.SetActive(false);
+            }
+        }*/
+    }
+
+    public void UnlockAllButtons()
+    {
+        for (int i = 0; i < uiButtons.Length; i++)
+        {
+            uiButtons[i].gameObject.SetActive(true);
         }
     }
 
     private void ActionKeyPress()
     {
+        cursors[curButton].UseTool();
+
         switch (curButton)
         {
             case 0:
@@ -122,73 +155,128 @@ public class InputManager : MonoBehaviour
                 break;
 
             case 2:
-                InitPetting();
+                InitFood();
                 break;
 
             case 3:
-                InitFood();
+                InitPetting();
                 break;
 
             case 4:
                 InitFling();
+                break;
+
+            case 5:
+                //AudioButtonUp();
+                break;
+
+            case 6:
+                //QuitApp();
                 break;
         }
     }
 
     private void ActionKeyRelease()
     {
+        cursors[curButton].IdleTool();
+
         switch (curButton)
         {
+            case 0:
+                break;
+
             case 1:
                 ReleaseWater();
                 break;
 
             case 2:
-                ReleasePetting();
+                ReleaseFood();
                 break;
 
             case 3:
-                ReleaseFood();
+                ReleasePetting();
                 break;
 
             case 4:
                 ReleaseFling();
                 break;
+
+            case 5:
+                AudioButtonUp();
+                break;
+
+            case 6:
+                QuitApp();
+                break;
         }
 
+    }
+
+    public void AudioButtonUp()
+    {
+        AudioManager.instance.AudioButtonPushed();
     }
 
     public void EndAllFunctions()
     {
         //release fling triggers dazed anim - find workaround
+        AllIconsOff();
         ReleaseWater();
         ReleasePetting();
         ReleaseFood();
-        ReleaseFling();
+        shootScript.FalseEnd();
         //currentTool = null;
         //curButton = 0;
     }
 
+    public void AllIconsOff()
+    {
+        for(int i = 0; i < cursors.Length; i++)
+        {
+            cursors[i].gameObject.SetActive(false);
+        }
+    }
+
+    public void SwapIcon()
+    {
+        for(int i = 0; i < cursors.Length; i++)
+        {
+
+            if(i == curButton)
+            {
+                cursors[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                cursors[i].gameObject.SetActive(false);
+            }
+        }
+
+        currentTool = cursors[curButton].gameObject;
+    }
+
     private void InitWater()
     {
-        //seems unnecessary but it's a quirk of the particle system...
-        waterIcon.SetActive(true);
-        if (!waterParticles.isPlaying) { waterParticles.Play(); }
+        if (!waterParticles.isEmitting) { waterParticles.Play(); }
         waterTrig.enabled = true;
-        currentTool = waterIcon;
+        WaterSound();
+    }
+
+    private void WaterSound()
+    {
+        if (AudioManager.instance.sfx[7].isPlaying) { return; }
+        AudioManager.instance.PlaySFX(7);
     }
 
     private void ReleaseWater()
     {
         if (!waterParticles.isStopped) { waterParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting); }
         waterTrig.enabled = false;
-        waterIcon.SetActive(false);
+        StartCoroutine(AudioManager.instance.FadeOut(AudioManager.instance.sfx[7], 0.5f));
     }
 
     public void InitPetting()
     {
-        pettingIcon.SetActive(true);
-        currentTool = pettingIcon;
         if (isMouseOverPet())
         {
             petReaction.PetPetted();
@@ -197,17 +285,17 @@ public class InputManager : MonoBehaviour
 
     public void ReleasePetting()
     {
-        pettingIcon.SetActive(false);
+
     }
 
     private void InitFood()
     {
-        foodIcon.SetActive(true);
-        currentTool = foodIcon;
         if (stopFood) { return; }
-        Vector3 foodPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 foodPos = Camera.main.ScreenToWorldPoint(Desktopia.Cursor.Position);
+        foodPos.y = -foodPos.y;
         foodPos.z = 0;
-        Instantiate(possibleFood[curFood], foodPos, Quaternion.identity, null);
+        GameObject clone = Instantiate(possibleFood[curFood], foodPos, Quaternion.identity, null);
+        GameManager.instance.foodObjectsOnScreen.Add(clone);
         FoodCheck();
         stopFood = true;
     }
@@ -224,20 +312,22 @@ public class InputManager : MonoBehaviour
     public void ReleaseFood()
     {
         stopFood = false;
-        foodIcon.SetActive(false);
     }
 
     public void InitFling()
     {
-        flingIcon.SetActive(true);
         shootScript.StartDrag();
-        currentTool = flingIcon;
     }
 
     public void ReleaseFling()
     {
-        flingIcon.SetActive(false);
+        if (!cursors[4].gameObject.activeInHierarchy) { shootScript.FalseEnd(); return; }
         shootScript.EndDrag();
+    }
+
+    private void QuitApp()
+    {
+        Application.Quit();
     }
 
 }

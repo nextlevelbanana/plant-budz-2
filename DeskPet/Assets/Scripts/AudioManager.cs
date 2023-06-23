@@ -8,7 +8,8 @@ public class AudioManager : MonoBehaviour
 
     public AudioSource[] bkg;
     public AudioSource[] sfx;
-
+    private float fadeTime = 3.5f;
+    public bool transitioningSong = false;
     private void Awake()
     {
         instance = this;
@@ -21,34 +22,53 @@ public class AudioManager : MonoBehaviour
 
     public void AudioButtonPushed()
     {
+        if (transitioningSong) { return; }
+
+        transitioningSong = true;
+
         int num = 0;
+
         for (int i = 0; i < bkg.Length; i++)
         {
             if (bkg[i].isPlaying)
             {
-                StartCoroutine(FadeOut(bkg[i], 3.5f));
-                num = i + 1;
-                if(num > bkg.Length)
-                {
-                    num = 0;
-                }
+                StartCoroutine(FadeOut(bkg[i], fadeTime));
+                num = i;
             }
         }
 
-        StartCoroutine(FadeIn(bkg[num], 3.5f));
+        num += 1;
+
+        if (num > bkg.Length -1)
+        {
+            num = 0;
+        }
+
+        StartCoroutine(FadeIn(bkg[num], fadeTime));
+        Invoke("FadeOff", fadeTime);
+    }
+
+    private void FadeOff()
+    {
+        transitioningSong = false;
     }
 
     public void PlayBKG(int num)
     {
+        if (transitioningSong) { return; }
+
+        transitioningSong = true;
+
         for(int i = 0; i <bkg.Length; i++)
         {
             if (bkg[i].isPlaying)
             {
-                StartCoroutine(FadeOut(bkg[i], 3.5f));
+                StartCoroutine(FadeOut(bkg[i], fadeTime));
             }
         }
 
-        StartCoroutine(FadeIn(bkg[num], 3.5f));
+        StartCoroutine(FadeIn(bkg[num], fadeTime));
+        Invoke("FadeOff", fadeTime);
     }
 
     public void PlaySFX(int num)

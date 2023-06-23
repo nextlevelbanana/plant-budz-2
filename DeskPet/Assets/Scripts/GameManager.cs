@@ -6,15 +6,13 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    //mutation / progression
     public static GameManager instance;
-    public HUD display;
     public int curPhase = 0;
     public PetEvolution petEvo;
     public List<GameObject> foodObjectsOnScreen = new List<GameObject>();
-    public List<GameObject> dynamicObjectsOnScreen = new List<GameObject>();
     [SerializeField] InputManager input;
     public TextMeshProUGUI debugText;
+    public PetInteractionReaction petReaction;
 
     [Header("Stats Tracked")]
     public int foodEaten = 0;
@@ -22,9 +20,7 @@ public class GameManager : MonoBehaviour
     public int timesWatered = 0;
     public int timesFlung = 0;
     public int timesPet = 0;
-    public float happyMod = 1f;
-    public float sadMod = 1f;
-    private int totalInteractions = 0;
+    [SerializeField] private int totalInteractions = 0;
     public int requiredInteractionsForEvolution = 1;
 
     [Header("Play Timer")]
@@ -83,10 +79,30 @@ public class GameManager : MonoBehaviour
 
     public void HappinessCalc()
     {
-        //pretty rudimentary - feel free to revise!
         totalInteractions = foodEaten + timesPet + timesFlung + timesWatered;
-        happiness = totalInteractions / (timesFlung + timesWatered);
-        print("happiness is: " + happiness);
+
+        if(petReaction.petType == PetInteractionReaction.whatIsPet.Plant) { PlantHappyCalc(); return; }
+        if(petReaction.petType == PetInteractionReaction.whatIsPet.Fish) { FishHappyCalc(); return; }
+        //blob and cat follow same logic
+        BlobAndCatHappyCalc();
+    }
+
+    private void PlantHappyCalc()
+    {
+        happiness = timesWatered;
+        SetDebugMessage("Happiness: " + happiness);
+    }
+
+    private void FishHappyCalc()
+    {
+        happiness = (foodEaten + timesWatered) - (timesFlung + timesPet);
+        SetDebugMessage("Happiness: " + happiness);
+    }
+
+    private void BlobAndCatHappyCalc()
+    {
+        happiness = (foodEaten + timesPet) - (timesFlung + timesWatered);
+        SetDebugMessage("Happiness: " + happiness);
     }
 
     public void EvolutionCheck()
@@ -103,21 +119,22 @@ public class GameManager : MonoBehaviour
         HappinessCalc();
 
         //ensure minimum interaction?
-        if(totalInteractions < requiredInteractionsForEvolution) 
+        if (totalInteractions < requiredInteractionsForEvolution) 
         {
             return;
         }
 
-        if(curPhase == 0)
+        if (curPhase == 0)
         {
+            //passes timer check and minimum interaction check - should always trigger evolution
             happiness = timesWatered;
+            input.UnlockAllButtons();
         }
 
         if(petEvo.ShouldEvolve(happiness, curPhase))
         {
             ClearTrackedStats();
             curPhase++;
-            input.highestToolAllowed = 4;
         }
     }
 
@@ -129,6 +146,17 @@ public class GameManager : MonoBehaviour
         timesWatered = 0;
         timesFlung = 0;
         totalInteractions = 0;
+        DestroyAllFood();
+    }
+
+    private void DestroyAllFood()
+    {
+        foreach(GameObject food in foodObjectsOnScreen)
+        {
+            Destroy(food);
+        }
+
+        foodObjectsOnScreen.Clear();
     }
 
 

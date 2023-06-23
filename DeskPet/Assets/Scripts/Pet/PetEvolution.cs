@@ -6,6 +6,7 @@ public class PetEvolution : MonoBehaviour
 {
     private Animator anim;
     private PetBehavior pb;
+    private PetInteractionReaction reaction;
     //0 = plant, 1 = blob, 2 = cat, 3 = bunny. Not sure about endings yet.
     public RuntimeAnimatorController[] animators;
     public int nextAnimatorController = 0;
@@ -19,12 +20,14 @@ public class PetEvolution : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         pb = GetComponent<PetBehavior>();
+        reaction = GetComponent<PetInteractionReaction>();
         anim.runtimeAnimatorController = animators[nextAnimatorController];
     }
 
     public void InitEvolve()
     {
         //turn off trigger, ignore input
+        pb.RBZero();
         pb.SetExternalControl(4f);
         anim.SetTrigger("Evolve");
         //animation will call swap controller function
@@ -38,6 +41,32 @@ public class PetEvolution : MonoBehaviour
         anim.runtimeAnimatorController = animators[nextAnimatorController];
     }
 
+    public void PlantToBlobAudio()
+    {
+        //called through animator
+        AudioManager.instance.PlaySFX(1);
+        AudioManager.instance.PlayBKG(1);
+    }
+
+    public void BlobEvoCheck()
+    {
+        //anim trigger
+        if (reaction.petType == PetInteractionReaction.whatIsPet.Cat) { BlobToCatAudio(); }
+        if (reaction.petType == PetInteractionReaction.whatIsPet.Fish) { BlobToFishAudio(); }
+    }
+
+    private void BlobToCatAudio()
+    {
+        AudioManager.instance.PlaySFX(4);
+        AudioManager.instance.PlayBKG(2);
+    }
+
+    private void BlobToFishAudio()
+    {
+        AudioManager.instance.PlaySFX(14);
+        AudioManager.instance.PlayBKG(2);
+    }
+
     public bool ShouldEvolve(float happiness, int phase)
     {
         switch (phase)
@@ -47,26 +76,32 @@ public class PetEvolution : MonoBehaviour
                 if(happiness >= plantToBlobScore)
                 {
                     nextAnimatorController = 1;
+                    reaction.petType = PetInteractionReaction.whatIsPet.Blob;
                     InitEvolve();
                     return true;
                 }
                 return false;
 
             case 1:
-                //blob to cat / bunny
-                if(happiness <= blobToAnimalScore)
+                if(happiness >= blobToAnimalScore -1)
                 {
+                    //CAT
                     nextAnimatorController = 2;
+                    reaction.petType = PetInteractionReaction.whatIsPet.Cat;
+                    GameManager.instance.SetDebugMessage("Cat Evolution");
+                    pb.EnableCatMode();
                     InitEvolve();
-                    print("Set next anim controller to cat");
                     return true;
                 }
 
-                if(happiness > blobToAnimalScore)
+                if(happiness < blobToAnimalScore -1)
                 {
+                    //FISH
                     nextAnimatorController = 3;
-                    //InitEvolve();
-                    print("Set next anim controller to bunny");
+                    reaction.petType = PetInteractionReaction.whatIsPet.Fish;
+                    pb.EnableFishMode();
+                    InitEvolve();
+                    GameManager.instance.SetDebugMessage("Fish Evolution");
                     return true;
                 }
 
