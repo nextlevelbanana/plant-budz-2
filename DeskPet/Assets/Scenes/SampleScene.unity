@@ -176,6 +176,7 @@ MonoBehaviour:
   - 10
   - 20
   - 30
+  pos: {x: 0, y: 0}
 --- !u!4 &9579361
 Transform:
   m_ObjectHideFlags: 0
@@ -8340,7 +8341,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 263961703515130218, guid: 5c52824ca237c54408897e71839bf0a6, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 263961703515130219, guid: 5c52824ca237c54408897e71839bf0a6, type: 3}
       propertyPath: cursor
@@ -8352,7 +8353,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 263961703515130219, guid: 5c52824ca237c54408897e71839bf0a6, type: 3}
       propertyPath: topMost
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 263961703515130219, guid: 5c52824ca237c54408897e71839bf0a6, type: 3}
       propertyPath: windows

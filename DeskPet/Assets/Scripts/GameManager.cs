@@ -28,6 +28,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] float phaseTimer = 0f;
     [SerializeField] float[] progressionTimesPerPhase;
 
+    
+    public Vector2 pos;
+
     private void Awake()
     {
         instance = this;
