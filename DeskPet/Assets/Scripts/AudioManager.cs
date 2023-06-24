@@ -10,6 +10,8 @@ public class AudioManager : MonoBehaviour
     public AudioSource[] sfx;
     private float fadeTime = 3.5f;
     public bool transitioningSong = false;
+    private AudioSource aud;
+
     private void Awake()
     {
         instance = this;
@@ -106,5 +108,10 @@ public class AudioManager : MonoBehaviour
         }
 
         audioSource.volume = 1f;
+    }
+
+    public void PlaySound(AudioClip sound)
+    {
+        aud.PlayOneShot(sound);
     }
 }

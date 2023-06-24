@@ -13,9 +13,9 @@ public class ProjectileSettings : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // if (fireSound != null && AudioManager.Instance != null)
-        // {
-        //     AudioManager.Instance.PlaySound(fireSound);
-        // }
+        if (fireSound != null && BulletAudioManager.Instance != null)
+        {
+            BulletAudioManager.Instance.PlaySound(fireSound);
+        }
     }
 }

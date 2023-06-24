@@ -62,10 +62,10 @@ public class Damagable : MonoBehaviour
         else if( modAmount < 0 )
         {
             //Could add animation here for when hit!
-            // if (hitSound != null && AudioManager.Instance != null)
-            // {
-            //     AudioManager.Instance.PlaySound(hitSound);
-            // }
+            if (hitSound != null && BulletAudioManager.Instance != null)
+            {
+                BulletAudioManager.Instance.PlaySound(hitSound);
+            }
         }
     }
 
@@ -73,10 +73,10 @@ public class Damagable : MonoBehaviour
     private void Die()
     {
         //Could add animation here!
-        // if (deathSound != null && AudioManager.Instance != null)
-        // {
-        //     AudioManager.Instance.PlaySound(deathSound);
-        // }
+        if (deathSound != null && BulletAudioManager.Instance != null)
+        {
+            BulletAudioManager.Instance.PlaySound(deathSound);
+        }
 
         // if( UIController.Instance != null )
         // {

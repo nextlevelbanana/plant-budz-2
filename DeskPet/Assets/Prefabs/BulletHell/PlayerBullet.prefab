@@ -167,7 +167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firingSpeed: 0.1
   autoFireRate: 0.5
-  fireSound: {fileID: 0}
+  fireSound: {fileID: 8300000, guid: 92eaa5e47556ea540a7a131d94935af2, type: 3}
 --- !u!50 &6031851508695854741
 Rigidbody2D:
   serializedVersion: 4

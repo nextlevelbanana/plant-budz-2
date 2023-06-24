@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ShooterPlayer : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = GameManager.instance.pos;
+        if (GameManager.instance?.pos != null)
+            transform.position = GameManager.instance.pos;
     }
 
     // Update is called once per frame

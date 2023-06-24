@@ -152,23 +152,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce4b8a19a8e451348b298b1ff3df59e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  display: {fileID: 343777249}
   curPhase: 0
   petEvo: {fileID: 67922787}
   foodObjectsOnScreen:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  dynamicObjectsOnScreen: []
   input: {fileID: 369506945}
   debugText: {fileID: 1177400707}
+  petReaction: {fileID: 0}
   foodEaten: 0
   happiness: 0
   timesWatered: 0
   timesFlung: 0
   timesPet: 0
-  happyMod: 1
-  sadMod: 1
+  totalInteractions: 0
   requiredInteractionsForEvolution: 10
   shouldTime: 0
   phaseTimer: 0
@@ -235,6 +233,11 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  isFish: 0
+  fishGravMod: 0.01
+  fishMoveSpeed: 0
+  timeUntilSleep: 25
+  isAsleep: 0
   trigger: {fileID: 1698382993}
   ignoreCollisionTime: 3
   moveSpeed: 4.2
@@ -248,7 +251,6 @@ MonoBehaviour:
   rotationAmount: 360
   rotationSpeed: 10
   chaseSpeedMod: 0.75
-  eatPauseTime: 2
 --- !u!50 &67922782
 Rigidbody2D:
   serializedVersion: 4
@@ -433,6 +435,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trigger: {fileID: 1698382993}
+  petType: 0
 --- !u!114 &67922789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -907,38 +910,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 274dc91b229f9b5439dcff779ea1bc71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionKey:
-    m_Name: Action Key
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: ea45ad32-a347-4a49-a3cc-9fa8c372e126
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 9603bf46-8dfa-46fc-a433-3badca701f62
-      m_Path: <Keyboard>/space
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Action Key
-      m_Flags: 0
-    m_Flags: 0
   petReaction: {fileID: 67922788}
-  highestToolAllowed: 1
   playerLayer:
     serializedVersion: 2
     m_Bits: 128
-  ignoreInput: 0
-  waterIcon: {fileID: 607967612}
+  cursors: []
+  uiButtons: []
   waterParticles: {fileID: 476465301}
-  pettingIcon: {fileID: 309210088}
-  foodIcon: {fileID: 471402342}
   possibleFood:
   - {fileID: 1332870500944255719, guid: cf71615532e56774b844943da7f11093, type: 3}
   - {fileID: 3356986361820071226, guid: d32c47c048e5e634986fb3ebf1046304, type: 3}
   - {fileID: 240673220341157800, guid: e6f1c20d76c8fbf4b946a975e22d4369, type: 3}
-  flingIcon: {fileID: 1722014733}
   shootScript: {fileID: 67922791}
 --- !u!4 &369506946
 Transform:
@@ -6754,9 +6736,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e3c718d76aa69645b3c4e7b93177ab0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1561483540}
-  path: {fileID: 2040194770}
-  debugText: {fileID: 1177400707}
 --- !u!114 &944271009
 MonoBehaviour:
   m_ObjectHideFlags: 0
