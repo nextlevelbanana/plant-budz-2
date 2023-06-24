@@ -117,7 +117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df87335edad129d438d4bd9aa51abf30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  direction: {x: 0, y: -1}
+  direction: {x: -3, y: 0}
 --- !u!70 &1564626932759961927
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firingSpeed: 1
-  autoFireRate: 0.8
+  autoFireRate: 0.6
   fireSound: {fileID: 8300000, guid: 636cf2ac22d70954e8766c7044e16261, type: 3}
 --- !u!50 &6365255209312618786
 Rigidbody2D:
@@ -210,3 +210,5 @@ MonoBehaviour:
   maximumHitPoints: 1
   pointValue: 0
   faction: 2
+  hitSound: {fileID: 0}
+  deathSound: {fileID: 0}

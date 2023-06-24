@@ -117,7 +117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df87335edad129d438d4bd9aa51abf30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  direction: {x: 0, y: 2}
+  direction: {x: 5, y: 0}
 --- !u!70 &5904411144678133347
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -210,3 +210,5 @@ MonoBehaviour:
   maximumHitPoints: 3
   pointValue: 0
   faction: 1
+  hitSound: {fileID: 0}
+  deathSound: {fileID: 0}

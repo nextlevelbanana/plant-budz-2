@@ -14,11 +14,11 @@ public class Damagable : MonoBehaviour
     [Tooltip("Damagers don't hurt Damagables of the same faction")]
     public int faction = 1;
 
-    // [Tooltip("The sound to play on a hit that doesn't result in a death. Defaults to nothing.")]
-    // public AudioClip hitSound;
+    [Tooltip("The sound to play on a hit that doesn't result in a death. Defaults to nothing.")]
+    public AudioClip hitSound;
 
-    // [Tooltip("The sound to play on death. Defaults to nothing.")]
-    // public AudioClip deathSound;
+    [Tooltip("The sound to play on death. Defaults to nothing.")]
+    public AudioClip deathSound;
 
     private float currentHitPoints;
 
