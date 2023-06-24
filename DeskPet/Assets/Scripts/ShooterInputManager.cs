@@ -16,8 +16,6 @@ public class ShooterInputManager : MonoBehaviour
     //A timestamp of the moment we last fired
     private float lastTimeFired;
 
-    public bool autoFire;
-
     private ProjectileSettings projectileSettings;
 
     public void Awake()
@@ -66,21 +64,16 @@ public class ShooterInputManager : MonoBehaviour
             transform.position = newPosition;
         }
 
-        if( !autoFire && Desktopia.Inputs.GetKey(KeyCode.Space) )
+        if( Desktopia.Inputs.GetKey(KeyCode.Space) )
         {
-            Fire(projectileSettings.firingSpeed);
-        }
-
-        if (autoFire) 
-        {
-            Fire(projectileSettings.autoFireRate);
+            Fire();
         }
     }
 
 
-    public void Fire(float fireRate)
+    public void Fire()
     {
-        if (Time.time - lastTimeFired > fireRate)
+        if (Time.time - lastTimeFired > projectileSettings.firingSpeed)
         {
             lastTimeFired = Time.time;
             GameObject spawnedPrefab = Instantiate(projectilePrefab, spawnPoint.transform.position, Quaternion.identity) as GameObject;

@@ -37,14 +37,13 @@ public class Damager : MonoBehaviour
             {
                 Destroy(this.gameObject);
             }
-        }
+            //After that, check if the thing that touched us has an InvincibleOnHit
+            InvincibleOnHit invincibleOnHit = collision.gameObject.GetComponent<InvincibleOnHit>();
 
-        //After that, check if the thing that touched us has an InvincibleOnHit
-        InvincibleOnHit invincibleOnHit = collision.gameObject.GetComponent<InvincibleOnHit>();
-
-        if(invincibleOnHit != null)
-        {
-            invincibleOnHit.InvincibleStart();
+            if(invincibleOnHit != null)
+            {
+                invincibleOnHit.InvincibleStart();
+            }
         }
     }
 }
