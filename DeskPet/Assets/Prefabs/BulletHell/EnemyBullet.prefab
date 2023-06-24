@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1730442716001832828}
   - component: {fileID: 173921996353560408}
   - component: {fileID: 2654363596628484702}
+  - component: {fileID: -9021780313180780892}
   m_Layer: 0
   m_Name: EnemyBullet
   m_TagString: Untagged
@@ -150,3 +151,18 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.16, y: 0.16}
   m_Direction: 0
+--- !u!114 &-9021780313180780892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6182619976398342867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f7e0cfacbb9f714b9f8a0d415f3a200, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firingSpeed: 1
+  autoFireRate: 0.5
+  fireSound: {fileID: 0}

@@ -16,6 +16,10 @@ public class ShooterInputManager : MonoBehaviour
     //A timestamp of the moment we last fired
     private float lastTimeFired;
 
+    public bool autoFire;
+
+    private ProjectileSettings projectileSettings;
+
     public void Awake()
     {
         lastTimeFired = Time.time;
@@ -24,6 +28,12 @@ public class ShooterInputManager : MonoBehaviour
     void Start()
     {
         Desktopia.Inputs.AddOnKeyDown(KeyCode.Escape, Quit);
+        projectileSettings = projectilePrefab.GetComponent<ProjectileSettings>();
+
+        if (projectileSettings == null)
+        {
+            Debug.LogWarning("The equipped projectile is missing settings.");
+        }
     }
 
  void Update()
@@ -56,21 +66,21 @@ public class ShooterInputManager : MonoBehaviour
             transform.position = newPosition;
         }
 
-        if( Desktopia.Inputs.GetKey(KeyCode.Space) )
+        if( !autoFire && Desktopia.Inputs.GetKey(KeyCode.Space) )
         {
-            Fire();
+            Fire(projectileSettings.firingSpeed);
+        }
+
+        if (autoFire) 
+        {
+            Fire(projectileSettings.autoFireRate);
         }
     }
 
-    public void Fire()
-    {
-        ProjectileSettings projectileSettings = projectilePrefab.GetComponent<ProjectileSettings>();
 
-        if (projectileSettings == null)
-        {
-            Debug.LogWarning("The equipped projectile is missing settings.");
-        }
-        else if (Time.time - lastTimeFired > projectileSettings.firingSpeed)
+    public void Fire(float fireRate)
+    {
+        if (Time.time - lastTimeFired > fireRate)
         {
             lastTimeFired = Time.time;
             GameObject spawnedPrefab = Instantiate(projectilePrefab, spawnPoint.transform.position, Quaternion.identity) as GameObject;

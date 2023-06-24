@@ -6,6 +6,8 @@ public class ProjectileSettings : MonoBehaviour
 {
     [Tooltip("How many seconds between shots")]
     public float firingSpeed = 1f;
+    public float autoFireRate = 0.5f;
+
     public AudioClip fireSound;
 
     // Start is called before the first frame update
