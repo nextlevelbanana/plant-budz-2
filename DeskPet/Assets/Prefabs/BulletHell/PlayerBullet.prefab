@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 137764486895614750}
   - component: {fileID: 6031851508695854741}
   - component: {fileID: 6314403836697116410}
+  - component: {fileID: 5093755939279844807}
   m_Layer: 0
   m_Name: PlayerBullet
   m_TagString: Untagged
@@ -212,3 +213,15 @@ MonoBehaviour:
   faction: 1
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+--- !u!114 &5093755939279844807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6300662312921209595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c02ff7965131e4d4497538d4d518105b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
