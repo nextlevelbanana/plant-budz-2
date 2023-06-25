@@ -37,6 +37,7 @@ public class Damagable : MonoBehaviour
     public void TakeDamage(float damageAmount)
     {
         ModifyHitPoints(-damageAmount);
+
     }
 
     //We can do the same thing, but positive, to heal us
@@ -78,10 +79,10 @@ public class Damagable : MonoBehaviour
             BulletAudioManager.Instance.PlaySound(deathSound);
         }
 
-        // if( UIController.Instance != null )
-        // {
-        //     UIController.Instance.ChangeScore(pointValue);
-        // }
+        if( UIController.Instance != null )
+        {
+            UIController.Instance.ChangeScore(pointValue);
+        }
 
         Destroy(gameObject);
     }

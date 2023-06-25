@@ -32,5 +32,9 @@ public class BulletAudioManager : MonoBehaviour
         audioSource.PlayOneShot(sound);
     }
 
+    public void Muffle()
+    {
+        audioSource.volume = 0.05f;
+    }
 
 }
