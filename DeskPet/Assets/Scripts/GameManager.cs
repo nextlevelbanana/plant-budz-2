@@ -28,6 +28,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] float phaseTimer = 0f;
     [SerializeField] float[] progressionTimesPerPhase;
 
+    [Tooltip("cat or fish, to be set just before loading the last scene")]
+    public string finalForm;
+
     private void Awake()
     {
         instance = this;

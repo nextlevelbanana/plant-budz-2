@@ -12,6 +12,7 @@ public class StoryController : MonoBehaviour
 
     public TextAsset StoryJSON;
     public TextMeshProUGUI displayText;
+    public TextMeshProUGUI speakerText;
     public UnityEngine.UI.Button ButtonPrefab;
     public Story story;
     public GameObject canvas;
@@ -28,7 +29,6 @@ public class StoryController : MonoBehaviour
     }
 
     void HandleChoice (Choice choice) {
-        Debug.Log("chosen");
         story.ChooseChoiceIndex(choice.index);
       
         Refresh();
@@ -52,13 +52,7 @@ public class StoryController : MonoBehaviour
             var currentTags = story.currentTags;
             displayText.text = currentText;
 
-            if (story.currentTags.Count > 0)
-            {
-                var tag = story.currentTags[0];
-                SpriteController.Instance.SetSprite(tag);
-            }
-
-            Debug.Log(story.currentChoices.Count);
+            HandleTags();
 
             if (story.currentChoices.Count == 0) {
                 UnityEngine.UI.Button choiceButton = Instantiate (ButtonPrefab) as UnityEngine.UI.Button;
@@ -86,9 +80,26 @@ public class StoryController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    void HandleTags()
     {
-        
+            foreach (var t in story.currentTags)
+            {
+                var tag = t.Split(".");
+                Debug.Log(tag);
+                if(tag[0] == "who") 
+                {
+                    SetSpeaker(tag[1]);
+                    
+                } 
+                else if (tag[0] == "mood") 
+                {
+                    SpriteController.Instance.SetSprite(tag[1]);
+                }
+            }
+    }
+
+    void SetSpeaker(string who)
+    {
+        speakerText.text = who;
     }
 }
