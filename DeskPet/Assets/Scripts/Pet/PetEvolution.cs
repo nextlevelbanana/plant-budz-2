@@ -7,12 +7,13 @@ public class PetEvolution : MonoBehaviour
     private Animator anim;
     private PetBehavior pb;
     private PetInteractionReaction reaction;
-    //0 = plant, 1 = blob, 2 = cat, 3 = bunny. Not sure about endings yet.
     public RuntimeAnimatorController[] animators;
     public int nextAnimatorController = 0;
     [SerializeField] float plantToBlobScore = 0f;
     [SerializeField] float blobToAnimalScore = 0f;
     [SerializeField] float finalEvolutionScore = 0f;
+
+    public ParticleSystem evoParticles;
 
     //Idea is the evolution animation will contain a function that triggers the next anim swap.
 
@@ -22,14 +23,17 @@ public class PetEvolution : MonoBehaviour
         pb = GetComponent<PetBehavior>();
         reaction = GetComponent<PetInteractionReaction>();
         anim.runtimeAnimatorController = animators[nextAnimatorController];
+        anim.SetBool("Evolve", false);
     }
 
     public void InitEvolve()
     {
-        //turn off trigger, ignore input
-        pb.RBZero();
+        anim.Rebind();
+        anim.Update(0f);
         pb.SetExternalControl(4f);
-        anim.SetTrigger("Evolve");
+        anim.SetBool("Evolve", true);
+        if (!evoParticles.isEmitting) { evoParticles.Play(); }
+        pb.RBZero();
         //animation will call swap controller function
     }
 
@@ -38,14 +42,15 @@ public class PetEvolution : MonoBehaviour
         //Called through animator!
         //evolution is finished
         pb.EndExternalControl();
+        //anim.SetBool("Evolve", false);
         anim.runtimeAnimatorController = animators[nextAnimatorController];
+        if (!evoParticles.isStopped) { evoParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting); }
     }
 
     public void PlantToBlobAudio()
     {
         //called through animator
         AudioManager.instance.PlaySFX(1);
-        AudioManager.instance.PlayBKG(1);
     }
 
     public void BlobEvoCheck()
@@ -64,7 +69,22 @@ public class PetEvolution : MonoBehaviour
     private void BlobToFishAudio()
     {
         AudioManager.instance.PlaySFX(14);
-        AudioManager.instance.PlayBKG(2);
+        AudioManager.instance.PlayBKG(1);
+    }
+
+    private void SetBlobStats()
+    {
+        GameManager.instance.SetNewStats(15, 7, 3);
+    }
+
+    private void SetFishStats()
+    {
+        GameManager.instance.SetNewStats(20, 10, 6);
+    }
+
+    private void SetCatStats()
+    {
+        GameManager.instance.SetNewStats(20, 8, 4);
     }
 
     public bool ShouldEvolve(float happiness, int phase)
@@ -78,6 +98,7 @@ public class PetEvolution : MonoBehaviour
                     nextAnimatorController = 1;
                     reaction.petType = PetInteractionReaction.whatIsPet.Blob;
                     InitEvolve();
+                    SetBlobStats();
                     return true;
                 }
                 return false;
@@ -86,22 +107,24 @@ public class PetEvolution : MonoBehaviour
                 if(happiness >= blobToAnimalScore -1)
                 {
                     //CAT
+                    //GameManager.instance.SetDebugMessage("Cat Evo");
                     nextAnimatorController = 2;
                     reaction.petType = PetInteractionReaction.whatIsPet.Cat;
-                    GameManager.instance.SetDebugMessage("Cat Evolution");
                     pb.EnableCatMode();
                     InitEvolve();
+                    SetCatStats();
                     return true;
                 }
 
                 if(happiness < blobToAnimalScore -1)
                 {
                     //FISH
+                    //GameManager.instance.SetDebugMessage("Fish Evo");
                     nextAnimatorController = 3;
                     reaction.petType = PetInteractionReaction.whatIsPet.Fish;
                     pb.EnableFishMode();
                     InitEvolve();
-                    GameManager.instance.SetDebugMessage("Fish Evolution");
+                    SetFishStats();
                     return true;
                 }
 

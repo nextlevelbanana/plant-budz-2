@@ -26,6 +26,7 @@ public class PetTrigger : MonoBehaviour
         if(other.tag == "Food")
         {
             pb.StartBehavior(PetBehavior.currentBehavior.EatFood, other);
+            StartCoroutine(IgnoreCollision(1.2f));
         }
 
         if(other.tag == "Water")

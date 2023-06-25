@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
+using UnityEngine.SceneManagement;
 
 public class InputManager : MonoBehaviour
 {
-
-    //separate function for just activating cursor & setting current tool. second sprite for using it...
-   
     private int curButton = 0;
     public PetInteractionReaction petReaction;
     private GameObject currentTool = null;
     [SerializeField] LayerMask playerLayer;
     //public GameObject[] cursors;
     public CursorIcons[] cursors;
+
+    [Header("Button Tab")]
+    public Animator buttonLayoutAnim;
+    private string openTrig = "Open", closeTrig = "Close";
+    private bool buttonsAreOpen = false;
 
     [Header("Buttons")]
     public UIButtons[] uiButtons;
@@ -26,27 +29,21 @@ public class InputManager : MonoBehaviour
 
     [Header("Food")]
     public GameObject[] possibleFood;
-    private int curFood = 0, maxFood;
+    private int curFood = 0, foodCount;
     private bool stopFood = false;
 
     [Header("Fling")]
     public DragAndShoot shootScript;
-
-    
-
     private void Start()
     {
         Desktopia.Inputs.AddOnMouseDown(0, MouseDown);
         Desktopia.Inputs.AddOnMouseUp(0, MouseRelease);
-        maxFood = possibleFood.Length;
+        foodCount = possibleFood.Length;
         waterParticles.Pause();
         waterTrig = waterParticles.GetComponent<BoxCollider2D>();
         waterTrig.enabled = false;
-        StarterButtons();
         EndAllFunctions();
     }
-
-
 
     private void Update()
     {
@@ -79,13 +76,20 @@ public class InputManager : MonoBehaviour
 
         if (col.TryGetComponent<UIButtons>(out UIButtons button))
         {
+            if (button.isSelected) 
+            {
+                NoTool();
+                button.SetUnselected();
+                return;
+            }
+
             //clicked button
             newButtonSelectionIgnore = true;
-            curButton = button.SetSelected();
+            curButton = button.GetButtonNum();
             SwapIcon();
             cursors[curButton].IdleTool();
             button.SetSelected();
-            DeselectButtons();
+            DeselectUnusedButtons();
         }
     }
 
@@ -94,6 +98,7 @@ public class InputManager : MonoBehaviour
         if (newButtonSelectionIgnore) 
         {
             newButtonSelectionIgnore = false;
+            //specific behavior with slingshot
             if(curButton == 4) { return; }
         }
         ActionKeyRelease();
@@ -105,7 +110,7 @@ public class InputManager : MonoBehaviour
         currentTool.transform.position = mousePos;
     }
 
-    private void DeselectButtons()
+    private void DeselectUnusedButtons()
     {
         for (int i = 0; i < uiButtons.Length; i++)
         {
@@ -118,26 +123,10 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private void StarterButtons()
-    {
-        uiButtons[1].gameObject.SetActive(false);
-        uiButtons[2].gameObject.SetActive(false);
-        uiButtons[3].gameObject.SetActive(false);
-        /*for(int i = 0; i < uiButtons.Length; i++)
-        {
-            if (uiButtons[i].buttonNum != 1)
-            {
-                uiButtons[i].gameObject.SetActive(false);
-            }
-        }*/
-    }
-
     public void UnlockAllButtons()
     {
-        for (int i = 0; i < uiButtons.Length; i++)
-        {
-            uiButtons[i].gameObject.SetActive(true);
-        }
+        buttonLayoutAnim.SetTrigger(openTrig);
+        buttonsAreOpen = true;
     }
 
     private void ActionKeyPress()
@@ -147,7 +136,7 @@ public class InputManager : MonoBehaviour
         switch (curButton)
         {
             case 0:
-                GameManager.instance.SetDebugMessage("No tool selected");
+                //GameManager.instance.SetDebugMessage("No tool selected");
                 break;
 
             case 1:
@@ -173,6 +162,13 @@ public class InputManager : MonoBehaviour
             case 6:
                 //QuitApp();
                 break;
+
+            case 7:
+                break;
+
+            case 8:
+                
+                break;
         }
     }
 
@@ -194,7 +190,8 @@ public class InputManager : MonoBehaviour
                 break;
 
             case 3:
-                ReleasePetting();
+                //just need to know if mouse button down + over player.
+                //ReleasePetting();
                 break;
 
             case 4:
@@ -208,25 +205,38 @@ public class InputManager : MonoBehaviour
             case 6:
                 QuitApp();
                 break;
+
+            case 7:
+                ResetGame();
+                break;
+
+            case 8:
+                ToggleButtonsTab();
+                break;
         }
 
+    }
+
+    private void NoTool()
+    {
+        curButton = 0;
+        EndAllFunctions();
     }
 
     public void AudioButtonUp()
     {
         AudioManager.instance.AudioButtonPushed();
+        curButton = 0;
+        DeselectUnusedButtons();
     }
 
     public void EndAllFunctions()
     {
-        //release fling triggers dazed anim - find workaround
         AllIconsOff();
         ReleaseWater();
-        ReleasePetting();
+        //ReleasePetting();
         ReleaseFood();
         shootScript.FalseEnd();
-        //currentTool = null;
-        //curButton = 0;
     }
 
     public void AllIconsOff()
@@ -255,6 +265,8 @@ public class InputManager : MonoBehaviour
         currentTool = cursors[curButton].gameObject;
     }
 
+    #region Water
+
     private void InitWater()
     {
         if (!waterParticles.isEmitting) { waterParticles.Play(); }
@@ -272,8 +284,14 @@ public class InputManager : MonoBehaviour
     {
         if (!waterParticles.isStopped) { waterParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting); }
         waterTrig.enabled = false;
-        StartCoroutine(AudioManager.instance.FadeOut(AudioManager.instance.sfx[7], 0.5f));
+        AudioManager.instance.StopWater();
+
     }
+
+
+    #endregion
+
+    #region Petting
 
     public void InitPetting()
     {
@@ -283,11 +301,9 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    public void ReleasePetting()
-    {
+    #endregion
 
-    }
-
+    #region Food
     private void InitFood()
     {
         if (stopFood) { return; }
@@ -295,15 +311,15 @@ public class InputManager : MonoBehaviour
         foodPos.y = -foodPos.y;
         foodPos.z = 0;
         GameObject clone = Instantiate(possibleFood[curFood], foodPos, Quaternion.identity, null);
-        GameManager.instance.foodObjectsOnScreen.Add(clone);
-        FoodCheck();
+        GameManager.instance.AddFood(clone);
+        CycleFood();
         stopFood = true;
     }
 
-    private void FoodCheck()
+    private void CycleFood()
     {
         curFood++;
-        if(curFood >= maxFood)
+        if (curFood >= foodCount)
         {
             curFood = 0;
         }
@@ -314,6 +330,9 @@ public class InputManager : MonoBehaviour
         stopFood = false;
     }
 
+    #endregion
+
+    #region Fling
     public void InitFling()
     {
         shootScript.StartDrag();
@@ -325,9 +344,36 @@ public class InputManager : MonoBehaviour
         shootScript.EndDrag();
     }
 
+    #endregion
+
+
+
     private void QuitApp()
     {
         Application.Quit();
+    }
+
+    private void ResetGame()
+    {
+        SceneManager.LoadScene(1);
+    }
+
+    private void ToggleButtonsTab()
+    {
+        curButton = 0;
+        //DeselectUnusedButtons();
+        uiButtons[7].SetUnselected();
+
+        if (buttonsAreOpen)
+        {
+            buttonLayoutAnim.SetTrigger(closeTrig);
+            buttonsAreOpen = false;
+            return;
+        }
+
+        buttonLayoutAnim.SetTrigger(openTrig);
+        buttonsAreOpen = true;
+        
     }
 
 }

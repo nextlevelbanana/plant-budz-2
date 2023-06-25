@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using TMPro;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] InputManager input;
     public TextMeshProUGUI debugText;
     public PetInteractionReaction petReaction;
+    private int maxFoodAllowed = 60;
 
     [Header("Stats Tracked")]
     public int foodEaten = 0;
@@ -21,7 +23,9 @@ public class GameManager : MonoBehaviour
     public int timesFlung = 0;
     public int timesPet = 0;
     [SerializeField] private int totalInteractions = 0;
-    public int requiredInteractionsForEvolution = 1;
+    public int requiredInteractionsForEvolution = 10;
+    private int underfedThresh = 0, overfedThresh = 0;
+    
 
     [Header("Play Timer")]
     public bool shouldTime = true;
@@ -75,6 +79,19 @@ public class GameManager : MonoBehaviour
     public void RemoveFood(GameObject food)
     {
         foodObjectsOnScreen.Remove(food);
+        foodEaten++;
+
+        if(foodEaten > overfedThresh) { petReaction.PetOverfed(); }
+    }
+
+    public void AddFood(GameObject food)
+    {
+        foodObjectsOnScreen.Add(food);
+        if (foodObjectsOnScreen.Count >= maxFoodAllowed)
+        {
+            DestroyAllFood();
+            SetDebugMessage("Too much food...");
+        }
     }
 
     public void HappinessCalc()
@@ -87,6 +104,15 @@ public class GameManager : MonoBehaviour
         BlobAndCatHappyCalc();
     }
 
+    private void FatCalc()
+    {
+        if(foodEaten <= underfedThresh) { happiness -= 5; return; }
+
+        if(foodEaten > underfedThresh && foodEaten <= overfedThresh) { happiness += 5; }
+
+        if(foodEaten > overfedThresh) { happiness -= 3; }
+    }
+
     private void PlantHappyCalc()
     {
         happiness = timesWatered;
@@ -95,14 +121,16 @@ public class GameManager : MonoBehaviour
 
     private void FishHappyCalc()
     {
-        happiness = (foodEaten + timesWatered) - (timesFlung + timesPet);
-        SetDebugMessage("Happiness: " + happiness);
+        happiness = (foodEaten + (timesWatered * 2)) - (timesFlung + timesPet);
+        FatCalc();
+        SetDebugMessage("Fish Happiness: " + happiness);
     }
 
     private void BlobAndCatHappyCalc()
     {
-        happiness = (foodEaten + timesPet) - (timesFlung + timesWatered);
-        SetDebugMessage("Happiness: " + happiness);
+        happiness = (foodEaten + (timesPet * 2)) - (timesFlung + timesWatered);
+        FatCalc();
+        SetDebugMessage("Blob / Cat Happiness: " + happiness);
     }
 
     public void EvolutionCheck()
@@ -111,7 +139,6 @@ public class GameManager : MonoBehaviour
         {
             if(phaseTimer <= progressionTimesPerPhase[curPhase])
             {
-                SetDebugMessage("Time threshold for phase not met.");
                 return;
             }
         }
@@ -126,8 +153,6 @@ public class GameManager : MonoBehaviour
 
         if (curPhase == 0)
         {
-            //passes timer check and minimum interaction check - should always trigger evolution
-            happiness = timesWatered;
             input.UnlockAllButtons();
         }
 
@@ -149,7 +174,14 @@ public class GameManager : MonoBehaviour
         DestroyAllFood();
     }
 
-    private void DestroyAllFood()
+    public void SetNewStats(int requiredInteractions, int overfed, int underfed)
+    {
+        requiredInteractionsForEvolution = requiredInteractions;
+        overfedThresh = overfed;
+        underfedThresh = underfed;
+    }
+
+    public void DestroyAllFood()
     {
         foreach(GameObject food in foodObjectsOnScreen)
         {
@@ -158,6 +190,13 @@ public class GameManager : MonoBehaviour
 
         foodObjectsOnScreen.Clear();
     }
+
+    public void ResetFoodScore()
+    {
+        foodEaten = 0;
+    }
+
+
 
 
 }

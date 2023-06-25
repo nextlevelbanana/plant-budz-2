@@ -16,6 +16,7 @@ public class PetBehavior : MonoBehaviour
     [Header("Animation")]
     private Animator anim;
     private SpriteRenderer sr;
+    private bool flippedLeft = false;
 
     [Header("FishMod")]
     public bool isFish;
@@ -35,12 +36,13 @@ public class PetBehavior : MonoBehaviour
     [SerializeField] float moveSpeed = 1f;
     [SerializeField] float timeToMove = 2f;
     [SerializeField] float timeToPause = 2f;
-    private float minMoveTime = 2f;
-    private float maxMoveTime = 10f;
+    [SerializeField] private float minMoveTime = 2f;
+    [SerializeField] private float maxMoveTime = 10f;
     [SerializeField] private bool isMoving;
     [SerializeField] private bool stopMoving;
     [SerializeField] Vector2 moveDir = Vector2.zero;
-    private Vector2 lastDir = Vector2.zero;
+    [SerializeField] private float[] possibleMoveDir;
+    private int moveDirCounter = 0;
 
     [Header("Wall Climb")]
     [SerializeField] float climbSpeed = 4f;
@@ -55,7 +57,8 @@ public class PetBehavior : MonoBehaviour
     [Header("Finding Food")]
     private bool findingFood = false;
     [SerializeField] float chaseSpeedMod = 0.75f;
-    //[SerializeField] float eatPauseTime = 2f;
+    [SerializeField] Transform eatPosition;
+    [SerializeField] float eatPauseTime = 2f;
 
     [Header("External Control")]
     private currentBehavior lastBehavior = currentBehavior.ExternalControl;
@@ -71,21 +74,17 @@ public class PetBehavior : MonoBehaviour
         anim = GetComponent<Animator>();
         petReaction = GetComponent<PetInteractionReaction>();
         sleepTimeHold = timeUntilSleep;
+        moveDirCounter = Random.Range(0, possibleMoveDir.Length);
     }
 
     private void Update()
     {
-        //GameManager.instance.SetDebugMessage(behavior.ToString());
-        //new method in GameMan (if ya want!) Should make it easier for both of us to have our own debugs
-        //had to comment out to test different logs
-
         switch (behavior)
         {
             case currentBehavior.ExternalControl:
                 break;
 
             case currentBehavior.Sleep:
-                //asleep?
                 break;
 
             case currentBehavior.Patrol:
@@ -125,7 +124,8 @@ public class PetBehavior : MonoBehaviour
 
             rb.AddForce(moveDir, ForceMode2D.Force);
 
-            sr.flipX = moveDir.x < 0;
+            FlipChar();
+            //sr.flipX = moveDir.x < 0;
         }
 
         if (stopMoving) 
@@ -153,6 +153,55 @@ public class PetBehavior : MonoBehaviour
         PetReset();
     }
 
+    private void FlipChar()
+    {
+        if(moveDir.x < 0 && !flippedLeft)
+        {
+            //flip left
+            Vector2 curScale = transform.localScale;
+            curScale.x *= -1;
+            transform.localScale = curScale;
+            flippedLeft = true;
+            return;
+        }
+
+
+        if(moveDir.x > 0 && flippedLeft)
+        {
+            Vector2 curScale = transform.localScale;
+            curScale.x *= -1;
+            transform.localScale = curScale;
+            flippedLeft = false;
+        }
+    }
+
+    public void StartBehavior(currentBehavior newBehavior, Collider2D obj = null)
+    {
+        behavior = newBehavior;
+
+        switch (newBehavior)
+        {
+            case currentBehavior.ExternalControl:
+                break;
+
+            case currentBehavior.Sleep:
+                break;
+
+            case currentBehavior.Patrol:
+                StartMoving();
+                break;
+
+            case currentBehavior.WallClimb:
+                //InitWallClimb((BoxCollider2D)obj);
+                StartBehavior(currentBehavior.Patrol);
+                break;
+
+            case currentBehavior.EatFood:
+                DestroyFood(obj.gameObject);
+                break;
+        }
+    }
+
     public void SleepCheck()
     {
         //Actions trigger this
@@ -162,7 +211,7 @@ public class PetBehavior : MonoBehaviour
             StartBehavior(currentBehavior.Patrol);
             anim.SetBool("Asleep", false);
             isAsleep = false;
-
+            GameManager.instance.ResetFoodScore();
         }
 
         timeUntilSleep = sleepTimeHold;
@@ -176,7 +225,7 @@ public class PetBehavior : MonoBehaviour
 
     public void EnableCatMode()
     {
-        moveSpeed += 0.5f;
+        moveSpeed += 0.7f;
     }
 
     private bool isGrounded()
@@ -213,9 +262,10 @@ public class PetBehavior : MonoBehaviour
     public void SetExternalControl(float triggerOffTime)
     {
         if (behavior == currentBehavior.ExternalControl) { return; }
-        lastBehavior = behavior;
+        //lastBehavior = behavior;
         StartBehavior(currentBehavior.ExternalControl);
         isMoving = false;
+        isAsleep = false;
         climbing = false;
         findingFood = false;
         StartCoroutine(trigger.IgnoreCollision(triggerOffTime));
@@ -223,7 +273,8 @@ public class PetBehavior : MonoBehaviour
 
     public void EndExternalControl()
     {
-        StartBehavior(lastBehavior);
+        StartBehavior(currentBehavior.Patrol);
+        //StartBehavior(lastBehavior);
     }
 
     public void RBZero()
@@ -270,16 +321,17 @@ public class PetBehavior : MonoBehaviour
 
     private void StartMoving()
     {
-        //Noted issue is random never feels 'random'
-        //pet will end up charging into a wall for 4+ move cycles
-        //not a huge deal but a fix if we have time!
         timeToPause = Random.Range(minMoveTime, maxMoveTime);
-        moveDir = Random.Range(0f,1f) > 0.5f ? Vector2.right : Vector2.left;
+        moveDir.x = possibleMoveDir[moveDirCounter];
         if (isFish) { moveDir.y = Random.Range(0.05f , 1f); }
         moveDir *= moveSpeed;
         isMoving = true;
-        
-        //startMoving = true;
+        moveDirCounter++;
+        if(moveDirCounter > possibleMoveDir.Length - 1)
+        {
+            moveDirCounter = 0;
+        }
+    
     }
 
     private void StopMoving() {
@@ -380,33 +432,6 @@ public class PetBehavior : MonoBehaviour
 
     #endregion
 
-    public void StartBehavior(currentBehavior newBehavior, Collider2D obj = null) {
-        behavior = newBehavior;
-        switch (newBehavior)
-        {
-            case currentBehavior.ExternalControl:
-                break;
-
-            case currentBehavior.Sleep:
-                break;
-
-            case currentBehavior.Patrol:
-                StartMoving();
-                break;
-
-            case currentBehavior.WallClimb: 
-                //InitWallClimb((BoxCollider2D)obj);
-                StartBehavior(currentBehavior.Patrol);
-                break;
-
-            case currentBehavior.EatFood: 
-                DestroyFood(obj.gameObject);
-                break;
-        }
-    }
-
-
-
     #region Find Food
     private void SetFoodTarget()
     {
@@ -432,24 +457,23 @@ public class PetBehavior : MonoBehaviour
 
     public void FoodFound()
     {
-        rb.velocity = new Vector2(rb.velocity.x * 0.15f, rb.velocity.y);
+        //slow down
         if (!isFish) { rb.gravityScale = 1; }
+
         petReaction.PetEatingAnim();
-        //StartCoroutine(ReturnToPatrol(eatPauseTime));
+        StartCoroutine(ReturnToPatrol(eatPauseTime));
         curTarget = null;
         findingFood = false;
     }
     private void DestroyFood(GameObject food)
     {
-        if(food == null) { return; }
+        if(food == null || behavior == currentBehavior.ExternalControl) { return; }
+        isMoving = false;
+        stopMoving = true;
         AudioManager.instance.PlaySFX(3);
-        GameManager.instance.foodEaten++;
-        food.GetComponent<Animator>().SetTrigger("Eat");
         GameManager.instance.RemoveFood(food);
+        food.GetComponent<FoodBehavior>().PlayEat(eatPosition.position);
         FoodFound();
-        Destroy(food, 2.1f);
-        //hard set - found food coroutine gets sticky with flings
-        StartBehavior(currentBehavior.Patrol, null);
     }
 
     #endregion

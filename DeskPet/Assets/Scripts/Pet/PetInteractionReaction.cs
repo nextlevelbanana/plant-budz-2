@@ -25,7 +25,6 @@ public class PetInteractionReaction : MonoBehaviour
 
     public void PetWatered()
     {
-        
         StartCoroutine(trigger.IgnoreCollision(1.5f));
         behavior.SleepCheck();
         gameMan.timesWatered++;
@@ -58,6 +57,11 @@ public class PetInteractionReaction : MonoBehaviour
         behavior.SleepCheck();
         anim.SetTrigger(animEat);
         gameMan.EvolutionCheck();
+    }
+
+    public void PetOverfed()
+    {
+        transform.localScale *= 1.1f;
     }
     public void PetStartFling()
     {
@@ -107,40 +111,6 @@ public class PetInteractionReaction : MonoBehaviour
     {
         AudioManager.instance.PlaySFX(11);
     }
-
-
-    //1 happy, 2 angry, 3 dazed
-    //Interesting idea but scrapping it for now
-    public void SFXFilter(int sfxType)
-    {
-        switch (petType)
-        {
-            case whatIsPet.Plant:
-                break;
-
-            case whatIsPet.Blob:
-
-                if (sfxType == 2)
-                {
-                    AudioManager.instance.PlaySFX(0);
-                }
-                break;
-
-            case whatIsPet.Cat:
-
-                if (sfxType == 2)
-                {
-                    //angry cat sound
-                    AudioManager.instance.PlaySFX(0);
-                }
-
-                break;
-
-            case whatIsPet.Fish:
-                break;
-        }
-    }
-
 
 
 

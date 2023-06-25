@@ -59,22 +59,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Desktopia\Examples\04_Collisions\SphereSpawner.cs" />
+    <Compile Include="Assets\Scripts\PlayerTools\DragAndShoot.cs" />
+    <Compile Include="Assets\Scripts\PlayerTools\CursorIcons.cs" />
     <Compile Include="Assets\Desktopia\Examples\05_DragDrop\DragDrop.cs" />
     <Compile Include="Assets\Scripts\Pet\PetBehavior.cs" />
+    <Compile Include="Assets\Scripts\Rotate3D.cs" />
+    <Compile Include="Assets\Scripts\AudioManager.cs" />
     <Compile Include="Assets\Scripts\Pet\PetInteractionReaction.cs" />
-    <Compile Include="Assets\Scripts\WaterParticleFollow.cs" />
+    <Compile Include="Assets\Scripts\PlayerTools\ScoreHole.cs" />
+    <Compile Include="Assets\Scripts\PlayerTools\WaterParticleFollow.cs" />
+    <Compile Include="Assets\Scripts\SplashVidPlay.cs" />
     <Compile Include="Assets\Desktopia\Examples\03_Inputs\InputListener.cs" />
-    <Compile Include="Assets\Scripts\TextAssets\WobblyText.cs" />
-    <Compile Include="Assets\Scripts\DragAndShoot.cs" />
+    <Compile Include="Assets\Scripts\PlayerTools\LineDrag.cs" />
     <Compile Include="Assets\Scripts\Pet\PetTrigger.cs" />
-    <Compile Include="Assets\Scripts\ScoreHole.cs" />
+    <Compile Include="Assets\Scripts\Dialog\WobblyText.cs" />
     <Compile Include="Assets\TypewriterWithHTMLStrings\TypewriterWithHTMLStrings.cs" />
     <Compile Include="Assets\Scripts\Pet\PetEvolution.cs" />
     <Compile Include="Assets\Scripts\InputManager.cs" />
+    <Compile Include="Assets\Scripts\UIButtons.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
-    <Compile Include="Assets\Scripts\UIButtonTest.cs" />
-    <Compile Include="Assets\Scripts\NPCPathfinding.cs" />
-    <Compile Include="Assets\Scripts\LineDrag.cs" />
     <Compile Include="Assets\Scripts\FoodBehavior.cs" />
     <Compile Include="Assets\Desktopia\Examples\02_MoveCursor\MoveCursor.cs" />
     <Compile Include="Assets\Scripts\HUD.cs" />
@@ -357,9 +360,6 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.8.0\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Pathfinding.Ionic.Zip.Reduced">
-      <HintPath>Assets\Pathfinding\AstarPathfindingProject\Plugins\DotNetZip\Pathfinding.Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.1f1\Editor\Data\NetStandard\ref\2.1.0\netstandard.dll</HintPath>
@@ -793,9 +793,6 @@
     <Reference Include="Unity.RenderPipelines.Universal.Runtime">
       <HintPath>Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.PlasticSCM.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.Burst">
       <HintPath>Library\ScriptAssemblies\Unity.Burst.dll</HintPath>
     </Reference>
@@ -894,21 +891,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="PackageToolsEditor.csproj">
-      <Project>{269F13CF-6A68-AD79-CFC8-221C462270B0}</Project>
-      <Name>PackageToolsEditor</Name>
-    </ProjectReference>
-    <ProjectReference Include="AstarPathfindingProject.csproj">
-      <Project>{077C2373-DFAF-8CE5-3217-2AA2F348AB47}</Project>
-      <Name>AstarPathfindingProject</Name>
-    </ProjectReference>
     <ProjectReference Include="Desktopia.csproj">
       <Project>{46260944-A4F7-2EE0-A021-257342CD45BE}</Project>
       <Name>Desktopia</Name>
-    </ProjectReference>
-    <ProjectReference Include="AstarPathfindingProjectEditor.csproj">
-      <Project>{EA7591B3-A2A5-BA80-F4D5-7021D4E993FF}</Project>
-      <Name>AstarPathfindingProjectEditor</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

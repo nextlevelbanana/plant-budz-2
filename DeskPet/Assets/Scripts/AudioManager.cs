@@ -8,8 +8,8 @@ public class AudioManager : MonoBehaviour
 
     public AudioSource[] bkg;
     public AudioSource[] sfx;
-    private float fadeTime = 3.5f;
-    public bool transitioningSong = false;
+    private bool fadingOut = false;
+    private bool fadingIn = false;
     private void Awake()
     {
         instance = this;
@@ -22,9 +22,7 @@ public class AudioManager : MonoBehaviour
 
     public void AudioButtonPushed()
     {
-        if (transitioningSong) { return; }
-
-        transitioningSong = true;
+        if (fadingOut || fadingIn) { return; }
 
         int num = 0;
 
@@ -32,43 +30,39 @@ public class AudioManager : MonoBehaviour
         {
             if (bkg[i].isPlaying)
             {
-                StartCoroutine(FadeOut(bkg[i], fadeTime));
-                num = i;
+                StartCoroutine(FadeAudioOut(i, 3.5f));
+                //bkg[i].Stop();
+                num = i + 1;
             }
         }
 
-        num += 1;
+        //num += 1;
 
         if (num > bkg.Length -1)
         {
-            num = 0;
+            StopAllAudio();
+            return;
         }
 
-        StartCoroutine(FadeIn(bkg[num], fadeTime));
-        Invoke("FadeOff", fadeTime);
-    }
+        //bkg[num].Play();
+        StartCoroutine(FadeAudioIn(num, 3.5f));
 
-    private void FadeOff()
-    {
-        transitioningSong = false;
     }
-
     public void PlayBKG(int num)
     {
-        if (transitioningSong) { return; }
+        if (fadingOut || fadingIn) { return; }
 
-        transitioningSong = true;
-
-        for(int i = 0; i <bkg.Length; i++)
+        for (int i = 0; i <bkg.Length; i++)
         {
             if (bkg[i].isPlaying)
             {
-                StartCoroutine(FadeOut(bkg[i], fadeTime));
+                StartCoroutine(FadeAudioOut(i, 3.5f));
+                //bkg[i].Stop();
             }
         }
 
-        StartCoroutine(FadeIn(bkg[num], fadeTime));
-        Invoke("FadeOff", fadeTime);
+        //bkg[num].Play();
+        StartCoroutine(FadeAudioIn(num, 3.5f));
     }
 
     public void PlaySFX(int num)
@@ -76,35 +70,67 @@ public class AudioManager : MonoBehaviour
         sfx[num].Play();
     }
 
-    public IEnumerator FadeOut(AudioSource audioSource, float FadeTime)
+    public void StopWater()
     {
-        float startVolume = audioSource.volume;
+        sfx[7].Stop();
+    }
 
-        while (audioSource.volume > 0)
+    public void UpsetTum()
+    {
+        if(GameManager.instance.foodObjectsOnScreen.Count > 7)
         {
-            audioSource.volume -= startVolume * Time.deltaTime / FadeTime;
+            PlaySFX(16);
+            return;
+        }
 
+        PlaySFX(15);
+    }
+
+    public void StopAllAudio()
+    {
+        for(int i = 0; i < bkg.Length; i++)
+        {
+            bkg[i].Stop();
+        }
+    }
+
+    public IEnumerator FadeAudioIn(int track, float duration)
+    {
+        if (fadingIn) { yield break; }
+        fadingIn = true;
+        float currentTime = 0;
+        bkg[track].volume = 0;
+        bkg[track].Play();
+        float start = bkg[track].volume;
+        while (currentTime < duration)
+        {
+            currentTime += Time.deltaTime;
+            bkg[track].volume = Mathf.Lerp(start, 1, currentTime / duration);
             yield return null;
         }
 
-        audioSource.Stop();
-        audioSource.volume = startVolume;
+        bkg[track].volume = 1;
+        fadingIn = false;
+        yield break;
     }
 
-    public IEnumerator FadeIn(AudioSource audioSource, float FadeTime)
+    public IEnumerator FadeAudioOut(int track, float duration)
     {
-        float startVolume = 0.2f;
-
-        audioSource.volume = 0;
-        audioSource.Play();
-
-        while (audioSource.volume < 1.0f)
+        if (fadingOut) { yield break; }
+        fadingOut = true;
+        float currentTime = 0;
+        float start = bkg[track].volume;
+        while (currentTime < duration)
         {
-            audioSource.volume += startVolume * Time.deltaTime / FadeTime;
-
+            currentTime += Time.deltaTime;
+            bkg[track].volume = Mathf.Lerp(start, 0, currentTime / duration);
             yield return null;
         }
 
-        audioSource.volume = 1f;
+        bkg[track].volume = 0;
+        bkg[track].Stop();
+        fadingOut = false;
+        yield break;
     }
+
 }

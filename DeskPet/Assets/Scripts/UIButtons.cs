@@ -18,13 +18,18 @@ public class UIButtons : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         unpressedSprite = sr.sprite;
     }
-    public int SetSelected()
+    public int GetButtonNum()
+    {
+        return buttonNum;
+    }
+
+    public void SetSelected()
     {
         sr.sprite = pressedSprite;
         highlight.gameObject.SetActive(true);
         isSelected = true;
-        return buttonNum;
     }
+
 
     public void SetUnselected()
     {
