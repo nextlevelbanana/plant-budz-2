@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -32,6 +33,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] float phaseTimer = 0f;
     [SerializeField] float[] progressionTimesPerPhase;
 
+    [Tooltip("cat or fish, to be set just before loading the last scene")]
+    public string finalForm;
+
     private void Awake()
     {
         instance = this;
@@ -55,6 +59,11 @@ public class GameManager : MonoBehaviour
     private void ClearDebugMessage()
     {
         debugText.text = "";
+    }
+
+    public void LoadDatingSim()
+    {
+        SceneManager.LoadScene(2);
     }
 
     public GameObject GetClosestFood(Transform petTransform)

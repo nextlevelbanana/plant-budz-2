@@ -97,6 +97,7 @@ public class PetEvolution : MonoBehaviour
                 {
                     nextAnimatorController = 1;
                     reaction.petType = PetInteractionReaction.whatIsPet.Blob;
+                    GameManager.instance.LoadDatingSim();
                     InitEvolve();
                     SetBlobStats();
                     return true;

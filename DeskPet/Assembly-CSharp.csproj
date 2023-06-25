@@ -60,8 +60,11 @@
   <ItemGroup>
     <Compile Include="Assets\Desktopia\Examples\04_Collisions\SphereSpawner.cs" />
     <Compile Include="Assets\Scripts\PlayerTools\DragAndShoot.cs" />
+    <Compile Include="Assets\Scripts\DatingSim\StoryController.cs" />
     <Compile Include="Assets\Scripts\PlayerTools\CursorIcons.cs" />
+    <Compile Include="Assets\Ink\Demos\Basic Demo\Scripts\QuitGameOnKeypress.cs" />
     <Compile Include="Assets\Desktopia\Examples\05_DragDrop\DragDrop.cs" />
+    <Compile Include="Assets\Scripts\DatingSim\SpriteController.cs" />
     <Compile Include="Assets\Scripts\Pet\PetBehavior.cs" />
     <Compile Include="Assets\Scripts\Rotate3D.cs" />
     <Compile Include="Assets\Scripts\AudioManager.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="Assets\Scripts\PlayerTools\WaterParticleFollow.cs" />
     <Compile Include="Assets\Scripts\SplashVidPlay.cs" />
     <Compile Include="Assets\Desktopia\Examples\03_Inputs\InputListener.cs" />
+    <Compile Include="Assets\Ink\Demos\Basic Demo\Scripts\BasicInkExample.cs" />
     <Compile Include="Assets\Scripts\PlayerTools\LineDrag.cs" />
     <Compile Include="Assets\Scripts\Pet\PetTrigger.cs" />
     <Compile Include="Assets\Scripts\Dialog\WobblyText.cs" />
@@ -826,9 +830,6 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.VisualScripting.Flow.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.InternalAPIEngineBridge.001">
       <HintPath>Library\ScriptAssemblies\Unity.InternalAPIEngineBridge.001.dll</HintPath>
     </Reference>
@@ -837,6 +838,9 @@
     </Reference>
     <Reference Include="Unity.RenderPipeline.Universal.ShaderLibrary">
       <HintPath>Library\ScriptAssemblies\Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Flow.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline">
       <HintPath>Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
@@ -891,6 +895,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Ink-Libraries.csproj">
+      <Project>{DD7F25A8-A6CD-A96F-5813-CAE6810C78DA}</Project>
+      <Name>Ink-Libraries</Name>
+    </ProjectReference>
+    <ProjectReference Include="InkEditor.csproj">
+      <Project>{66773AAA-346E-5694-AA8F-72577C381205}</Project>
+      <Name>InkEditor</Name>
+    </ProjectReference>
     <ProjectReference Include="Desktopia.csproj">
       <Project>{46260944-A4F7-2EE0-A021-257342CD45BE}</Project>
       <Name>Desktopia</Name>
