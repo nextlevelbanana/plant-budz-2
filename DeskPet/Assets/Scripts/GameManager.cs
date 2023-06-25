@@ -35,6 +35,8 @@ public class GameManager : MonoBehaviour
 
     [Tooltip("cat or fish, to be set just before loading the last scene")]
     public string finalForm;
+    
+    public Vector2 pos;
 
     private void Awake()
     {
