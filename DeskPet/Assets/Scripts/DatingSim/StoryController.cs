@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -11,6 +12,7 @@ public class StoryController : MonoBehaviour
 {
 
     public TextAsset StoryJSON;
+    public TextAsset CatStoryJSON;
     public TextMeshProUGUI displayText;
     public TextMeshProUGUI speakerText;
     public UnityEngine.UI.Button ButtonPrefab;
@@ -22,7 +24,11 @@ public class StoryController : MonoBehaviour
     void Start()
     {
         canvas = GameObject.Find("Canvas");
-        story = new Story(StoryJSON.text);
+        //load different ink scripts based on fish or cat.
+        //This code is terrible. Don't be like me.
+        story = new Story((int?) GameManager.instance?.petReaction.petType == 2 
+            ? CatStoryJSON.text
+            : StoryJSON.text);
 
         Refresh();
            
@@ -100,6 +106,7 @@ public class StoryController : MonoBehaviour
 
     void SetSpeaker(string who)
     {
-        speakerText.text = who;
+        TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+        speakerText.text = textInfo.ToTitleCase(who);
     }
 }

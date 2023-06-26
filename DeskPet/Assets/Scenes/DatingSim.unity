@@ -708,7 +708,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7972a78e7a9eb24da6806c876d8519e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StoryJSON: {fileID: 4900000, guid: 81246d07a3a76764fb02d4df28374506, type: 3}
+  StoryJSON: {fileID: 4900000, guid: 857dff392e102854d8f12b1f0e678d02, type: 3}
+  CatStoryJSON: {fileID: 4900000, guid: 9556a149a00537545a2557e0ba1dfebb, type: 3}
   displayText: {fileID: 397083487}
   speakerText: {fileID: 458738626}
   ButtonPrefab: {fileID: 2576638440000223383, guid: 8d6ab7376991857418d873c017bf2b1c, type: 3}
