@@ -26,7 +26,7 @@ public class ButtonTag : MonoBehaviour
     public void HandleChoice()
     {
         story.HandleChoice(choice);
-        //story.Refresh();
+        choice = null;
     }
     
 }

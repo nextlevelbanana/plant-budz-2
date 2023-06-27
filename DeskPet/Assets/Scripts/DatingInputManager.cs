@@ -6,7 +6,6 @@ using TMPro;
 
 public class DatingInputManager : MonoBehaviour
 {
-    public TMP_Text debugTxt;
     public LayerMask buttonsLayer;
     public QuickUIButton settingsButtons;
 
@@ -28,8 +27,8 @@ public class DatingInputManager : MonoBehaviour
         {
             if(button.buttonNum == 0)
             {
-                debugTxt.text = "Pushed prefab button";
                 button.GetComponent<ButtonTag>().HandleChoice();
+                return;
             }
 
             if (button.buttonNum == 1) { settingsButtons.AudioButtonPress(); }

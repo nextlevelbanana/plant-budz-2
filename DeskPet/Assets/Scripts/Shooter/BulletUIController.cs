@@ -25,7 +25,10 @@ public class UIController : MonoBehaviour
 
     private int currentScore = 0;
 
-    private float elapsedTime = 0f;
+    public SpawnManager spawner;
+
+    private bool ready = false;
+    //private float elapsedTime = 0f;
 
     public void Awake()
     {
@@ -48,17 +51,21 @@ public class UIController : MonoBehaviour
         if (GameManager.instance.finalForm == 3)
         {
             curPlayer = Instantiate(playerFish, GameManager.instance.pos, Quaternion.identity);
+            spawner.SetEnemies(1);
         }
         else
         {
             curPlayer = Instantiate(playerCat, GameManager.instance.pos, Quaternion.identity);
+            spawner.SetEnemies(0);
         }
 
         shootManager.SetCurPlayer(curPlayer);
+        ready = true;
     }
 
     public void Update()
     {
+        if (!ready) { return; }
         if(curPlayer == null && loseScreen != null)
         {
             loseScreen.SetActive(true);

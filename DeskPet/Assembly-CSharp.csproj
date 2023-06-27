@@ -71,12 +71,10 @@
     <Compile Include="Assets\Scripts\DatingSim\SpriteController.cs" />
     <Compile Include="Assets\Scripts\Pet\PetBehavior.cs" />
     <Compile Include="Assets\Scripts\Shooter\SpawnManager.cs" />
-    <Compile Include="Assets\Scripts\Shooter\EnemySpawner.cs" />
     <Compile Include="Assets\Scripts\Phil - Misc\HUD.cs" />
-    <Compile Include="Assets\Scripts\Shooter\DestroyOffScreen.cs" />
+    <Compile Include="Assets\Scripts\Shooter\DestroyerCollider.cs" />
     <Compile Include="Assets\Scripts\Shooter\ShooterPlayer.cs" />
     <Compile Include="Assets\Scripts\Pet\PetInteractionReaction.cs" />
-    <Compile Include="Assets\Scripts\Shooter\BulletAudioManager.cs" />
     <Compile Include="Assets\Scripts\Shooter\Damageable.cs" />
     <Compile Include="Assets\Scripts\PlayerTools\ScoreHole.cs" />
     <Compile Include="Assets\Scripts\Shooter\EnemyMovement.cs" />
@@ -87,6 +85,7 @@
     <Compile Include="Assets\Scripts\Pet\PetTrigger.cs" />
     <Compile Include="Assets\Scripts\Dialog\WobblyText.cs" />
     <Compile Include="Assets\TypewriterWithHTMLStrings\TypewriterWithHTMLStrings.cs" />
+    <Compile Include="Assets\Scripts\Shooter\Unused\DestroyOffScreen.cs" />
     <Compile Include="Assets\Scripts\Shooter\Damager.cs" />
     <Compile Include="Assets\Scripts\PlayerManager.cs" />
     <Compile Include="Assets\Scripts\Shooter\BulletUIController.cs" />
@@ -94,11 +93,13 @@
     <Compile Include="Assets\Scripts\Shooter\ShooterInputManager.cs" />
     <Compile Include="Assets\Scripts\Phil - Misc\FoodBehavior.cs" />
     <Compile Include="Assets\Scripts\DatingInputManager.cs" />
+    <Compile Include="Assets\Scripts\Shooter\Unused\EnemySpawner.cs" />
     <Compile Include="Assets\Scripts\Shooter\InvincibleOnHit.cs" />
     <Compile Include="Assets\Scripts\Shooter\MoveDown.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\Phil - Misc\Rotate3D.cs" />
     <Compile Include="Assets\Scripts\Phil - Misc\UIButtons.cs" />
+    <Compile Include="Assets\Scripts\Shooter\Unused\BulletAudioManager.cs" />
     <Compile Include="Assets\Scripts\Phil - Misc\AudioManager.cs" />
     <Compile Include="Assets\Scripts\Phil - Misc\SplashVidPlay.cs" />
     <Compile Include="Assets\Desktopia\Examples\02_MoveCursor\MoveCursor.cs" />

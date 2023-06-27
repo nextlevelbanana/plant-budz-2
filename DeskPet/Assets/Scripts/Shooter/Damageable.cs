@@ -36,7 +36,8 @@ public class Damagable : MonoBehaviour
         {
             AudioManager.instance.PlaySFX(1);
         }
-        else
+
+        if(gameObject.tag == "Enemy")
         {
             AudioManager.instance.PlaySFX(0);
         }

@@ -37,7 +37,7 @@ public class QuickUIButton : MonoBehaviour
 
     public void ResetButton()
     {
-        Destroy(GameManager.instance.gameObject);
+        Destroy(GameManager.instance);
         SceneManager.LoadScene(1);
     }
 }

@@ -6,7 +6,9 @@ public class SpawnManager : MonoBehaviour
 {
     public Transform[] spawnPoints;
     private int curSpawnPoint = 0;
-    public GameObject[] enemies;
+    private GameObject[] enemies;
+    public GameObject[] catEnemies;
+    public GameObject[] fishEnemies;
 
     public float spawnTime = 3f;
     private float spawnTimeHold = 0;
@@ -16,6 +18,7 @@ public class SpawnManager : MonoBehaviour
     public float waveTime = 10f;
     private float waveTimeHold = 0;
 
+    private bool ready = false;
     private void Start()
     {
         waveTimeHold = waveTime;
@@ -24,6 +27,7 @@ public class SpawnManager : MonoBehaviour
 
     private void Update()
     {
+        if (!ready) { return; }
         waveTime -= Time.deltaTime;
         if(waveTime <= 0)
         {
@@ -57,6 +61,22 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    public void SetEnemies(int type)
+    {
+
+        //0 = cat, 1 = fish
+        if(type == 0)
+        {
+            enemies = catEnemies;
+        }
+        else
+        {
+            enemies = fishEnemies;
+        }
+
+        ready = true;
+    }
+
     public void NextWave()
     {
         waveTime = waveTimeHold;
@@ -86,21 +106,21 @@ public class SpawnManager : MonoBehaviour
     public void Wave1()
     {
         GameObject clone = Instantiate(enemies[0], spawnPoints[curSpawnPoint].transform.position, Quaternion.identity);
-        Destroy(clone, 6f);
+        //Destroy(clone, 6f);
         SwitchSpawnPoint();
     }
 
     public void Wave2()
     {
         GameObject clone = Instantiate(enemies[Random.Range(0, 1)], spawnPoints[curSpawnPoint].transform.position, Quaternion.identity);
-        Destroy(clone, 6f);
+        //Destroy(clone, 6f);
         curSpawnPoint = Random.Range(0, spawnPoints.Length);
     }
 
     public void Wave3()
     {
-        GameObject clone = Instantiate(enemies[Random.Range(0, enemies.Length)], spawnPoints[curSpawnPoint].transform.position, Quaternion.identity);
-        Destroy(clone, 6f);
+        GameObject clone = Instantiate(enemies[Random.Range(0, enemies.Length +1)], spawnPoints[curSpawnPoint].transform.position, Quaternion.identity);
+        //Destroy(clone, 6f);
         SwitchSpawnPoint();
     }
 }

@@ -357,7 +357,7 @@ public class InputManager : MonoBehaviour
 
     private void ResetGame()
     {
-        Destroy(GameManager.instance.gameObject);
+        Destroy(GameManager.instance);
         SceneManager.LoadScene(1);
     }
 

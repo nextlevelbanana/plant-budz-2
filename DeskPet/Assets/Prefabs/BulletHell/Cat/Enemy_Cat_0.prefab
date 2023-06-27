@@ -51,7 +51,7 @@ GameObject:
   - component: {fileID: 6012121286957463064}
   m_Layer: 0
   m_Name: Enemy_Cat_0
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -244,7 +244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   invincibilityLength: 0.3
-  colorOnHit: {r: 0, g: 0, b: 0, a: 0.32156864}
+  colorOnHit: {r: 0.7254902, g: 0, b: 0.6, a: 1}
 --- !u!114 &6087810860616348825
 MonoBehaviour:
   m_ObjectHideFlags: 0

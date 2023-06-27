@@ -12,6 +12,6 @@ public class ProjectileSettings : MonoBehaviour
     void Start()
     {
         //no shoot sfx anymore?
-        Destroy(gameObject, 6f);
+        //Destroy(gameObject, 6f);
     }
 }

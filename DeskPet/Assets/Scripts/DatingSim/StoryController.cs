@@ -15,25 +15,19 @@ public class StoryController : MonoBehaviour
     public TextAsset CatStoryJSON;
     public TextMeshProUGUI displayText;
     public TextMeshProUGUI speakerText;
-    public UnityEngine.UI.Button ButtonPrefab;
+    //public UnityEngine.UI.Button ButtonPrefab;
 
     public Story story;
     public GameObject buttonPanel;
 
     public GameObject testButton;
-    public bool testing = false;
+    public bool testing = true;
 
     private bool ignore = true;
 
-    //OHHHHHHHHHHHHHHHHHKAY
-    //I rerouted all of inks outputs through what desktopia will recognize as a button (test dialog button in prefabs)
-    //It works! But it looks horrible (right now)
-    //If you want to toy with it -- the text asset attached to the prefab needs adjusting
-    //There needs to be placement transforms (3) for all potential dialog boxes
-    //They'll be placed at the proper transforms upon being instantiated
-    //**Keep the testing bool true on this object -- There is no circumstance where it will work with the bool off**
-
-    //MOSTLY I have no idea how long the text options get so find the longest one, type it out on the prefab, and make it look good. Everything else should be fine.
+    public Transform[] threeButtonLayout;
+    public Transform[] twoButtonLayout;
+    private int curButtonPlace = 0;
 
 
     void Start()
@@ -45,18 +39,21 @@ public class StoryController : MonoBehaviour
         Refresh();
     }
 
-    public void HandleChoice (Choice choice) {
+    public void HandleChoice (Choice choice)
+    {
+        if (choice == null) { Refresh(); return; }
+
         story.ChooseChoiceIndex(choice.index);
-      
+
         Refresh();
     }
 
     void ClearUI() 
     {
-        foreach (UnityEngine.UI.Button button in buttonPanel.GetComponentsInChildren<UnityEngine.UI.Button>())
+        /*foreach (UnityEngine.UI.Button button in buttonPanel.GetComponentsInChildren<UnityEngine.UI.Button>())
         {
             Destroy(button.gameObject);
-        }
+        }*/
 
         foreach(ButtonTag button in buttonPanel.GetComponentsInChildren<ButtonTag>())
         {
@@ -81,12 +78,12 @@ public class StoryController : MonoBehaviour
 
                 if (testing)
                 {
-                    GameObject choiceButton = Instantiate(testButton, buttonPanel.transform, false);
+                    GameObject choiceButton = Instantiate(testButton, threeButtonLayout[1], false);
                     var choiceText = choiceButton.GetComponent<ButtonTag>().choiceTxt;
                     choiceText.text = "...";
-
                 }
-                else
+
+                /*else
                 {
                     UnityEngine.UI.Button choiceButton = Instantiate(ButtonPrefab, buttonPanel.transform, false);
 
@@ -94,17 +91,35 @@ public class StoryController : MonoBehaviour
 
                     var choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
                     choiceText.text = "...";
-                }
+                }*/
 
 
 
+            }
+
+            bool is3 = false;
+
+            if (story.currentChoices.Count > 2)
+            {
+                is3 = true;
+                //3 button layout
             }
 
             story.currentChoices.ForEach(choice => {
 
                 if (testing)
                 {
-                    GameObject choiceButton = Instantiate(testButton, buttonPanel.transform, false);
+                    GameObject choiceButton = null;
+                    if (is3)
+                    {
+                        choiceButton = Instantiate(testButton, threeButtonLayout[curButtonPlace], false);
+                    }
+                    else
+                    {
+                        choiceButton = Instantiate(testButton, twoButtonLayout[curButtonPlace], false);
+                    }
+
+                    curButtonPlace++;
 
                     choiceButton.GetComponent<ButtonTag>().SetChoice(choice);
 
@@ -112,7 +127,7 @@ public class StoryController : MonoBehaviour
 
                     choiceText.text = choice.text;
                 }
-                else
+                /*else
                 {
                     UnityEngine.UI.Button choiceButton = Instantiate(ButtonPrefab, buttonPanel.transform, false); //as UnityEngine.UI.Button;
 
@@ -122,10 +137,12 @@ public class StoryController : MonoBehaviour
 
                     var choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
                     choiceText.text = choice.text;
-                }
+                }*/
+
+                
 
             });
-
+            curButtonPlace = 0;
         }
     }
 
@@ -134,7 +151,9 @@ public class StoryController : MonoBehaviour
         foreach (var t in story.currentTags)
         {
             var tag = t.Split(".");
+
             Debug.Log(tag);
+
             if (tag[0] == "who")
             {
                 SetSpeaker(tag[1]);
