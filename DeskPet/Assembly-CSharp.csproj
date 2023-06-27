@@ -59,32 +59,49 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Desktopia\Examples\04_Collisions\SphereSpawner.cs" />
+    <Compile Include="Assets\Scripts\Phil - Misc\InputManager.cs" />
     <Compile Include="Assets\Scripts\PlayerTools\DragAndShoot.cs" />
+    <Compile Include="Assets\Scripts\Shooter\AutoFire.cs" />
     <Compile Include="Assets\Scripts\DatingSim\StoryController.cs" />
+    <Compile Include="Assets\Scripts\Shooter\DirectionTextScroll.cs" />
     <Compile Include="Assets\Scripts\PlayerTools\CursorIcons.cs" />
     <Compile Include="Assets\Ink\Demos\Basic Demo\Scripts\QuitGameOnKeypress.cs" />
+    <Compile Include="Assets\Scripts\Shooter\ProjectileSettings.cs" />
     <Compile Include="Assets\Desktopia\Examples\05_DragDrop\DragDrop.cs" />
     <Compile Include="Assets\Scripts\DatingSim\SpriteController.cs" />
     <Compile Include="Assets\Scripts\Pet\PetBehavior.cs" />
-    <Compile Include="Assets\Scripts\Rotate3D.cs" />
-    <Compile Include="Assets\Scripts\AudioManager.cs" />
+    <Compile Include="Assets\Scripts\Shooter\SpawnManager.cs" />
+    <Compile Include="Assets\Scripts\Shooter\EnemySpawner.cs" />
+    <Compile Include="Assets\Scripts\Phil - Misc\HUD.cs" />
+    <Compile Include="Assets\Scripts\Shooter\DestroyOffScreen.cs" />
+    <Compile Include="Assets\Scripts\Shooter\ShooterPlayer.cs" />
     <Compile Include="Assets\Scripts\Pet\PetInteractionReaction.cs" />
+    <Compile Include="Assets\Scripts\Shooter\BulletAudioManager.cs" />
+    <Compile Include="Assets\Scripts\Shooter\Damageable.cs" />
     <Compile Include="Assets\Scripts\PlayerTools\ScoreHole.cs" />
+    <Compile Include="Assets\Scripts\Shooter\EnemyMovement.cs" />
     <Compile Include="Assets\Scripts\PlayerTools\WaterParticleFollow.cs" />
-    <Compile Include="Assets\Scripts\SplashVidPlay.cs" />
     <Compile Include="Assets\Desktopia\Examples\03_Inputs\InputListener.cs" />
     <Compile Include="Assets\Ink\Demos\Basic Demo\Scripts\BasicInkExample.cs" />
     <Compile Include="Assets\Scripts\PlayerTools\LineDrag.cs" />
     <Compile Include="Assets\Scripts\Pet\PetTrigger.cs" />
     <Compile Include="Assets\Scripts\Dialog\WobblyText.cs" />
     <Compile Include="Assets\TypewriterWithHTMLStrings\TypewriterWithHTMLStrings.cs" />
+    <Compile Include="Assets\Scripts\Shooter\Damager.cs" />
+    <Compile Include="Assets\Scripts\PlayerManager.cs" />
+    <Compile Include="Assets\Scripts\Shooter\BulletUIController.cs" />
     <Compile Include="Assets\Scripts\Pet\PetEvolution.cs" />
-    <Compile Include="Assets\Scripts\InputManager.cs" />
-    <Compile Include="Assets\Scripts\UIButtons.cs" />
+    <Compile Include="Assets\Scripts\Shooter\ShooterInputManager.cs" />
+    <Compile Include="Assets\Scripts\Phil - Misc\FoodBehavior.cs" />
+    <Compile Include="Assets\Scripts\Shooter\InvincibleOnHit.cs" />
+    <Compile Include="Assets\Scripts\Shooter\MoveDown.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
-    <Compile Include="Assets\Scripts\FoodBehavior.cs" />
+    <Compile Include="Assets\Scripts\Phil - Misc\Rotate3D.cs" />
+    <Compile Include="Assets\Scripts\Phil - Misc\UIButtons.cs" />
+    <Compile Include="Assets\Scripts\Phil - Misc\AudioManager.cs" />
+    <Compile Include="Assets\Scripts\Phil - Misc\SplashVidPlay.cs" />
     <Compile Include="Assets\Desktopia\Examples\02_MoveCursor\MoveCursor.cs" />
-    <Compile Include="Assets\Scripts\HUD.cs" />
+    <Compile Include="Assets\Scripts\QuickUIButton.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

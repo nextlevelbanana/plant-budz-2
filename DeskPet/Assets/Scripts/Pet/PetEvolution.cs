@@ -32,7 +32,7 @@ public class PetEvolution : MonoBehaviour
         anim.Update(0f);
         pb.SetExternalControl(4f);
         anim.SetBool("Evolve", true);
-        if (!evoParticles.isEmitting) { evoParticles.Play(); }
+        if (!evoParticles.isEmitting) { evoParticles.Play(true); }
         pb.RBZero();
         //animation will call swap controller function
     }
@@ -97,7 +97,6 @@ public class PetEvolution : MonoBehaviour
                 {
                     nextAnimatorController = 1;
                     reaction.petType = PetInteractionReaction.whatIsPet.Blob;
-                    GameManager.instance.LoadDatingSim();
                     InitEvolve();
                     SetBlobStats();
                     return true;
@@ -109,6 +108,7 @@ public class PetEvolution : MonoBehaviour
                 {
                     //CAT
                     //GameManager.instance.SetDebugMessage("Cat Evo");
+                    GameManager.instance.finalForm = 2;
                     nextAnimatorController = 2;
                     reaction.petType = PetInteractionReaction.whatIsPet.Cat;
                     pb.EnableCatMode();
@@ -121,6 +121,7 @@ public class PetEvolution : MonoBehaviour
                 {
                     //FISH
                     //GameManager.instance.SetDebugMessage("Fish Evo");
+                    GameManager.instance.finalForm = 3;
                     nextAnimatorController = 3;
                     reaction.petType = PetInteractionReaction.whatIsPet.Fish;
                     pb.EnableFishMode();
@@ -135,8 +136,16 @@ public class PetEvolution : MonoBehaviour
                 //final evo
                 if(happiness >= finalEvolutionScore)
                 {
+                    GameManager.instance.LoadDatingSim();
                     return true;
                 }
+                else
+                {
+                    GameManager.instance.pos = transform.position;
+                    GameManager.instance.LoadBulletHell();
+                    return true;
+                }
+
                 return false;
         }
 

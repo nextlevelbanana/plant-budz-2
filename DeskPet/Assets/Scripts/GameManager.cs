@@ -33,8 +33,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] float phaseTimer = 0f;
     [SerializeField] float[] progressionTimesPerPhase;
 
-    [Tooltip("cat or fish, to be set just before loading the last scene")]
-    public string finalForm;
+    //This WAS needed (my bad). GameMan is the only thing that persists through scenes so it needs to store what the form is.
+    public int finalForm = 0;
+    //3 == fish
     
     public Vector2 pos;
 
@@ -49,6 +50,16 @@ public class GameManager : MonoBehaviour
         if (shouldTime)
         {
             phaseTimer += Time.deltaTime;
+        }
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LoadDatingSim();
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            LoadBulletHell();
         }
     }
 
@@ -66,6 +77,11 @@ public class GameManager : MonoBehaviour
     public void LoadDatingSim()
     {
         SceneManager.LoadScene(2);
+    }
+
+    public void LoadBulletHell()
+    {
+        SceneManager.LoadScene(3);
     }
 
     public GameObject GetClosestFood(Transform petTransform)
@@ -101,7 +117,7 @@ public class GameManager : MonoBehaviour
         if (foodObjectsOnScreen.Count >= maxFoodAllowed)
         {
             DestroyAllFood();
-            SetDebugMessage("Too much food...");
+            //SetDebugMessage("Too much food...");
         }
     }
 
@@ -127,21 +143,21 @@ public class GameManager : MonoBehaviour
     private void PlantHappyCalc()
     {
         happiness = timesWatered;
-        SetDebugMessage("Happiness: " + happiness);
+        //SetDebugMessage("Happiness: " + happiness);
     }
 
     private void FishHappyCalc()
     {
         happiness = (foodEaten + (timesWatered * 2)) - (timesFlung + timesPet);
         FatCalc();
-        SetDebugMessage("Fish Happiness: " + happiness);
+        //SetDebugMessage("Fish Happiness: " + happiness);
     }
 
     private void BlobAndCatHappyCalc()
     {
         happiness = (foodEaten + (timesPet * 2)) - (timesFlung + timesWatered);
         FatCalc();
-        SetDebugMessage("Blob / Cat Happiness: " + happiness);
+        //SetDebugMessage("Blob / Cat Happiness: " + happiness);
     }
 
     public void EvolutionCheck()

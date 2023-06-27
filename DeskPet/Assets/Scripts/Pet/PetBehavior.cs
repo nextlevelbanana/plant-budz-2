@@ -149,7 +149,6 @@ public class PetBehavior : MonoBehaviour
 
     private void OnBecameInvisible()
     {
-        GameManager.instance.SetDebugMessage("Pet off screen. Resetting.");
         PetReset();
     }
 

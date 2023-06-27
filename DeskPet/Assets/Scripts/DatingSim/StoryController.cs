@@ -17,21 +17,18 @@ public class StoryController : MonoBehaviour
     public TextMeshProUGUI speakerText;
     public UnityEngine.UI.Button ButtonPrefab;
     public Story story;
-    public GameObject canvas;
+    public GameObject buttonPanel;
 
+    //see implementation for notes
+    private bool ignore = true;
 
-    // Start is called before the first frame update
     void Start()
     {
-        canvas = GameObject.Find("Canvas");
-        //load different ink scripts based on fish or cat.
-        //This code is terrible. Don't be like me.
         story = new Story((int?) GameManager.instance?.petReaction.petType == 2 
             ? CatStoryJSON.text
             : StoryJSON.text);
 
         Refresh();
-           
     }
 
     void HandleChoice (Choice choice) {
@@ -42,7 +39,7 @@ public class StoryController : MonoBehaviour
 
     void ClearUI() 
     {
-        foreach (UnityEngine.UI.Button button in canvas.GetComponentsInChildren<UnityEngine.UI.Button>())
+        foreach (UnityEngine.UI.Button button in buttonPanel.GetComponentsInChildren<UnityEngine.UI.Button>())
         {
             Destroy(button.gameObject);
         }
@@ -61,9 +58,9 @@ public class StoryController : MonoBehaviour
             HandleTags();
 
             if (story.currentChoices.Count == 0) {
-                UnityEngine.UI.Button choiceButton = Instantiate (ButtonPrefab) as UnityEngine.UI.Button;
-		        choiceButton.transform.SetParent (canvas.transform, false);
-                
+                UnityEngine.UI.Button choiceButton = Instantiate(ButtonPrefab, buttonPanel.transform, false); //as UnityEngine.UI.Button;
+                //choiceButton.transform.SetParent(canvas.transform, false);
+
                 choiceButton.onClick.AddListener(() => {
                     Refresh();
                 });
@@ -73,8 +70,8 @@ public class StoryController : MonoBehaviour
 
             story.currentChoices.ForEach(choice => {
                 //Button choiceButton = Instantiate(ButtonPrefab, canvas.transform);
-                UnityEngine.UI.Button choiceButton = Instantiate (ButtonPrefab) as UnityEngine.UI.Button;
-		        choiceButton.transform.SetParent (canvas.transform, false);
+                UnityEngine.UI.Button choiceButton = Instantiate(ButtonPrefab, buttonPanel.transform, false); //as UnityEngine.UI.Button;
+		        //choiceButton.transform.SetParent(canvas.transform, false);
                 
                 choiceButton.onClick.AddListener(() => {
                     HandleChoice(choice);
@@ -88,20 +85,26 @@ public class StoryController : MonoBehaviour
 
     void HandleTags()
     {
-            foreach (var t in story.currentTags)
+        foreach (var t in story.currentTags)
+        {
+            var tag = t.Split(".");
+            Debug.Log(tag);
+            if (tag[0] == "who")
             {
-                var tag = t.Split(".");
-                Debug.Log(tag);
-                if(tag[0] == "who") 
-                {
-                    SetSpeaker(tag[1]);
-                    
-                } 
-                else if (tag[0] == "mood") 
-                {
-                    SpriteController.Instance.SetSprite(tag[1]);
-                }
+                SetSpeaker(tag[1]);
+
             }
+            else if (tag[0] == "mood")
+            {
+                if (ignore) { ignore = false; return; }
+                //The first time set image is called happens before sprite controller is fully set up
+                //gives a null ref and won't execute button code :/
+                //ignore = temp workaround
+
+                //SpriteController.Instance.SetSprite(tag[1]);
+                SpriteController.Instance.SetImage(tag[1]);
+            }
+        }
     }
 
     void SetSpeaker(string who)
