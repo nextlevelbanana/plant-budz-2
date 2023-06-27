@@ -16,11 +16,25 @@ public class StoryController : MonoBehaviour
     public TextMeshProUGUI displayText;
     public TextMeshProUGUI speakerText;
     public UnityEngine.UI.Button ButtonPrefab;
+
     public Story story;
     public GameObject buttonPanel;
 
-    //see implementation for notes
+    public GameObject testButton;
+    public bool testing = false;
+
     private bool ignore = true;
+
+    //OHHHHHHHHHHHHHHHHHKAY
+    //I rerouted all of inks outputs through what desktopia will recognize as a button (test dialog button in prefabs)
+    //It works! But it looks horrible (right now)
+    //If you want to toy with it -- the text asset attached to the prefab needs adjusting
+    //There needs to be placement transforms (3) for all potential dialog boxes
+    //They'll be placed at the proper transforms upon being instantiated
+    //**Keep the testing bool true on this object -- There is no circumstance where it will work with the bool off**
+
+    //MOSTLY I have no idea how long the text options get so find the longest one, type it out on the prefab, and make it look good. Everything else should be fine.
+
 
     void Start()
     {
@@ -31,7 +45,7 @@ public class StoryController : MonoBehaviour
         Refresh();
     }
 
-    void HandleChoice (Choice choice) {
+    public void HandleChoice (Choice choice) {
         story.ChooseChoiceIndex(choice.index);
       
         Refresh();
@@ -43,9 +57,14 @@ public class StoryController : MonoBehaviour
         {
             Destroy(button.gameObject);
         }
+
+        foreach(ButtonTag button in buttonPanel.GetComponentsInChildren<ButtonTag>())
+        {
+            Destroy(button.gameObject);
+        }
     }
 
-    void Refresh()
+    public void Refresh()
     {
         ClearUI();
         
@@ -57,27 +76,54 @@ public class StoryController : MonoBehaviour
 
             HandleTags();
 
-            if (story.currentChoices.Count == 0) {
-                UnityEngine.UI.Button choiceButton = Instantiate(ButtonPrefab, buttonPanel.transform, false); //as UnityEngine.UI.Button;
-                //choiceButton.transform.SetParent(canvas.transform, false);
+            if (story.currentChoices.Count == 0) 
+            {
 
-                choiceButton.onClick.AddListener(() => {
-                    Refresh();
-                });
-                var choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
-                choiceText.text = "...";
+                if (testing)
+                {
+                    GameObject choiceButton = Instantiate(testButton, buttonPanel.transform, false);
+                    var choiceText = choiceButton.GetComponent<ButtonTag>().choiceTxt;
+                    choiceText.text = "...";
+
+                }
+                else
+                {
+                    UnityEngine.UI.Button choiceButton = Instantiate(ButtonPrefab, buttonPanel.transform, false);
+
+                    choiceButton.onClick.AddListener(() => { Refresh(); });
+
+                    var choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
+                    choiceText.text = "...";
+                }
+
+
+
             }
 
             story.currentChoices.ForEach(choice => {
-                //Button choiceButton = Instantiate(ButtonPrefab, canvas.transform);
-                UnityEngine.UI.Button choiceButton = Instantiate(ButtonPrefab, buttonPanel.transform, false); //as UnityEngine.UI.Button;
-		        //choiceButton.transform.SetParent(canvas.transform, false);
-                
-                choiceButton.onClick.AddListener(() => {
-                    HandleChoice(choice);
-                });
-                var choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
-                choiceText.text = choice.text;
+
+                if (testing)
+                {
+                    GameObject choiceButton = Instantiate(testButton, buttonPanel.transform, false);
+
+                    choiceButton.GetComponent<ButtonTag>().SetChoice(choice);
+
+                    var choiceText = choiceButton.GetComponent<ButtonTag>().choiceTxt;
+
+                    choiceText.text = choice.text;
+                }
+                else
+                {
+                    UnityEngine.UI.Button choiceButton = Instantiate(ButtonPrefab, buttonPanel.transform, false); //as UnityEngine.UI.Button;
+
+                    choiceButton.onClick.AddListener(() => {
+                        HandleChoice(choice);
+                    });
+
+                    var choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
+                    choiceText.text = choice.text;
+                }
+
             });
 
         }

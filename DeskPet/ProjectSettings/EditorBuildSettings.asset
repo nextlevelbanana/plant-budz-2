@@ -14,5 +14,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DatingSim.unity
     guid: 7cbc2210338cd9248922cf1be714e205
+  - enabled: 1
+    path: Assets/Scenes/BulletHell.unity
+    guid: b11935ca5af423e41a0fddf9b64e1a7e
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 7c447701fe4e3b24ba76fb36d6d7f24d, type: 2}

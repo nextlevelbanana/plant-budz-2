@@ -136,6 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonNum: 0
+  isDatingSim: 1
 --- !u!1 &7675142972643128497
 GameObject:
   m_ObjectHideFlags: 0

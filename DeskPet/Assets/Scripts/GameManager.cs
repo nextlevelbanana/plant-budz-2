@@ -36,13 +36,22 @@ public class GameManager : MonoBehaviour
     //This WAS needed (my bad). GameMan is the only thing that persists through scenes so it needs to store what the form is.
     public int finalForm = 0;
     //3 == fish
+    public GameObject desktopia;
     
     public Vector2 pos;
 
     private void Awake()
     {
-        instance = this;
-        DontDestroyOnLoad(this);
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+        }
+
+        DontDestroyOnLoad(instance);
     }
 
     private void Update()
@@ -76,11 +85,13 @@ public class GameManager : MonoBehaviour
 
     public void LoadDatingSim()
     {
+        shouldTime = false;
         SceneManager.LoadScene(2);
     }
 
     public void LoadBulletHell()
     {
+        shouldTime = false;
         SceneManager.LoadScene(3);
     }
 

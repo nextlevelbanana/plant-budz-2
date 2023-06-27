@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Ink.Runtime;
+using TMPro;
 
 public class ButtonTag : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class ButtonTag : MonoBehaviour
     public bool isDatingSim = false;
 
     public Choice choice;
-
+    public TMP_Text choiceTxt;
     private StoryController story;
     private void Start()
     {
@@ -25,7 +26,7 @@ public class ButtonTag : MonoBehaviour
     public void HandleChoice()
     {
         story.HandleChoice(choice);
-        story.Refresh();
+        //story.Refresh();
     }
     
 }

@@ -34,7 +34,7 @@ public class SpriteController : MonoBehaviour
 
     void Start()
     {
-        //this is so clumsy but whatever, it's Sunday and I got better things to do than figure out abstractions
+
         if (GameManager.instance.finalForm == 3) 
         {
             happy = fishHappy;
@@ -69,9 +69,6 @@ public class SpriteController : MonoBehaviour
         {
             curImage.sprite = eh.sprite;
         }
-
-        //sorry, my brain just wants a basic read right now
-        //curImage.sprite = mood == "happy" ? happy.sprite : mood == "mad" ? mad.sprite : eh.sprite;
     }
 
     private void HappySFX()

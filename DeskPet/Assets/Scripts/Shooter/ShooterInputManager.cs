@@ -14,20 +14,10 @@ public class ShooterInputManager : MonoBehaviour
     private bool ready = false;
     private Vector2 vRef = Vector2.zero;
     public LayerMask uiLayer;
-    public EventSystem es;
-    //A timestamp of the moment we last fired
-    //private float lastTimeFired;
-
-    //private ProjectileSettings projectileSettings;
-
-    public void Awake()
-    {
-        //lastTimeFired = Time.time;
-    }
-    // Start is called before the first frame update
+    public QuickUIButton buttons;
     void Start()
     {
-        //Desktopia.Inputs.AddOnMouseDown(0, MouseDown);
+        Desktopia.Inputs.AddOnMouseDown(0, MouseDown);
     }
 
     public void SetCurPlayer(GameObject curPlayer)
@@ -78,16 +68,19 @@ public class ShooterInputManager : MonoBehaviour
 
     public void MouseDown()
     {
-        /*Vector3 clickLoc = Camera.main.ScreenToWorldPoint(Desktopia.Cursor.Position);
+        Vector3 clickLoc = Camera.main.ScreenToWorldPoint(Desktopia.Cursor.Position);
         clickLoc = new Vector2(clickLoc.x, -clickLoc.y);
         Collider2D col = Physics2D.OverlapCircle(clickLoc, 0.1f, uiLayer);
-        //if (col == null) { return; }
+        if (col == null) { return; }
 
-        if (col.TryGetComponent<Button>(out Button button))
+        if (col.TryGetComponent<ButtonTag>(out ButtonTag button))
         {
-            //button.onClick.Invoke();
-            //ExecuteEvents.Execute(button.gameObject, new BaseEventData(es), ExecuteEvents.submitHandler);
-        }*/
+            if(button.buttonNum == 1) { buttons.AudioButtonPress(); }
+
+            if(button.buttonNum == 2) { buttons.ResetButton(); }
+
+            if(button.buttonNum == 3) { buttons.QuitButton(); }
+        }
     }
 
     private void PlayerFollowCursor()
@@ -95,7 +88,5 @@ public class ShooterInputManager : MonoBehaviour
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Desktopia.Cursor.Position);
         mousePos = new Vector2(mousePos.x, -mousePos.y);
         curShooter.transform.position = Vector2.SmoothDamp(curShooter.transform.position, mousePos, ref vRef, moveSpeed);
-        //curShooter.transform.position = Vector2.Lerp(curShooter.transform.position, mousePos, moveSpeed);
-        //curShooter.transform.position = mousePos;
     }
 }

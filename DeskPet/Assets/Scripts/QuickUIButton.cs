@@ -6,27 +6,28 @@ using UnityEngine.SceneManagement;
 
 public class QuickUIButton : MonoBehaviour
 {
-    public Button audioButton;
+    public SpriteRenderer audioButton;
     public Sprite audioPress;
     private Sprite audioStart;
-
+    public static QuickUIButton instance;
 
 
     private void Start()
     {
-        audioStart = audioButton.image.sprite;
+        instance = this;
+        audioStart = audioButton.sprite;
     }
 
     public void AudioButtonPress()
     {
-        audioButton.image.sprite = audioPress;
+        audioButton.sprite = audioPress;
         AudioManager.instance.AudioButtonPushed();
         Invoke("AudioButtonUp", .2f);
     }
 
     private void AudioButtonUp()
     {
-        audioButton.image.sprite = audioStart;
+        audioButton.sprite = audioStart;
     }
 
     public void QuitButton()
@@ -36,6 +37,7 @@ public class QuickUIButton : MonoBehaviour
 
     public void ResetButton()
     {
+        Destroy(GameManager.instance.gameObject);
         SceneManager.LoadScene(1);
     }
 }

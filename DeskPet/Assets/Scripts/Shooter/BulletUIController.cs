@@ -45,16 +45,14 @@ public class UIController : MonoBehaviour
         loseScreen.SetActive(false);
         scoreText.text = defaultScoreText + currentScore;
 
-        curPlayer = Instantiate(playerCat, Vector2.zero, Quaternion.identity);
-
-        /*if (GameManager.instance.finalForm == 3)
+        if (GameManager.instance.finalForm == 3)
         {
             curPlayer = Instantiate(playerFish, GameManager.instance.pos, Quaternion.identity);
         }
         else
         {
             curPlayer = Instantiate(playerCat, GameManager.instance.pos, Quaternion.identity);
-        }*/
+        }
 
         shootManager.SetCurPlayer(curPlayer);
     }

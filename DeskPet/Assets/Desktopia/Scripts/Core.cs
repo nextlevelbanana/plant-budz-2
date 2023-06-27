@@ -35,7 +35,7 @@ using UnityEditor;
 namespace Desktopia
 {
     [AddComponentMenu("Desktopia")]
-    public sealed class Core : MonoBehaviour
+    public class Core : MonoBehaviour
     {
         const string version = "0.1";
         HashSet<Action> modulesUpdate;
@@ -85,6 +85,11 @@ namespace Desktopia
         {
             if(inputs) Inputs.Disable();
             if(dragDrop) Files.DragDrop.Disable();
+        }
+
+        public void SetClickThrough()
+        {
+            Windows.Main.SetClickThrough(true);
         }
 
         void OnApplicationQuit()

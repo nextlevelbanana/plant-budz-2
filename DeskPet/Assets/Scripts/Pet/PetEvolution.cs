@@ -145,8 +145,6 @@ public class PetEvolution : MonoBehaviour
                     GameManager.instance.LoadBulletHell();
                     return true;
                 }
-
-                return false;
         }
 
         return false;

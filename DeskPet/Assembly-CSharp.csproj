@@ -93,6 +93,7 @@
     <Compile Include="Assets\Scripts\Pet\PetEvolution.cs" />
     <Compile Include="Assets\Scripts\Shooter\ShooterInputManager.cs" />
     <Compile Include="Assets\Scripts\Phil - Misc\FoodBehavior.cs" />
+    <Compile Include="Assets\Scripts\DatingInputManager.cs" />
     <Compile Include="Assets\Scripts\Shooter\InvincibleOnHit.cs" />
     <Compile Include="Assets\Scripts\Shooter\MoveDown.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="Assets\Scripts\Phil - Misc\SplashVidPlay.cs" />
     <Compile Include="Assets\Desktopia\Examples\02_MoveCursor\MoveCursor.cs" />
     <Compile Include="Assets\Scripts\QuickUIButton.cs" />
+    <Compile Include="Assets\Scripts\ButtonTag.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

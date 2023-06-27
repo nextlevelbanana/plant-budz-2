@@ -154,7 +154,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &7044550938504143491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,6 +199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageToDo: 2
   faction: 2
+  deleteAfterCollision: 0
 --- !u!114 &5980973611012910623
 MonoBehaviour:
   m_ObjectHideFlags: 0
