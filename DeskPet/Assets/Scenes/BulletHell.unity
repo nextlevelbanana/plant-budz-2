@@ -5981,7 +5981,7 @@ MonoBehaviour:
   - {fileID: 1981943192843436204, guid: 6253c06b3cf748542a8f23ba0b943ba1, type: 3}
   - {fileID: 7501354790864841606, guid: b4878abba94243e408460a3514466d85, type: 3}
   - {fileID: 2201327369202439273, guid: fc294325c34c2a04bb3e0489cc1def4d, type: 3}
-  spawnTime: 5
+  spawnTime: 4
   spawnPatternType: 0
   spawnTimeDecrease: 0.5
   waveTime: 25
